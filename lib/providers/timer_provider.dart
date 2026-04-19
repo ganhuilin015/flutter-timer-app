@@ -27,7 +27,6 @@ class TimerProvider extends ChangeNotifier {
           changed = true;
         } else {
           timer.status = TimerStatus.finished;
-          timer.isEnabled = false;
           changed = true;
         }
       }
@@ -45,30 +44,8 @@ class TimerProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleEnabled(String id) {
-    final idx = _timers.indexWhere((t) => t.id == id);
-    if (idx == -1) return;
-    final timer = _timers[idx];
-    if (timer.isFinished) {
-      // Reset finished timer
-      timer.remainingSeconds = timer.totalSeconds;
-      timer.status = TimerStatus.idle;
-      timer.isEnabled = true;
-    } else {
-      timer.isEnabled = !timer.isEnabled;
-      if (!timer.isEnabled && timer.isRunning) {
-        timer.status = TimerStatus.paused;
-      } else if (timer.isEnabled && timer.isIdle) {
-        // auto-start when enabled
-        timer.status = TimerStatus.running;
-      }
-    }
-    notifyListeners();
-  }
-
   void startTimer(String id) {
     final timer = _timers.firstWhere((t) => t.id == id, orElse: () => throw Exception('Not found'));
-    if (!timer.isEnabled) return;
     if (timer.isFinished) {
       timer.remainingSeconds = timer.totalSeconds;
     }
@@ -93,7 +70,7 @@ class TimerProvider extends ChangeNotifier {
 
   void startAll() {
     for (final timer in _timers) {
-      if (timer.isEnabled && !timer.isRunning && !timer.isFinished) {
+      if (!timer.isRunning && !timer.isFinished) {
         timer.status = TimerStatus.running;
       }
     }
@@ -111,7 +88,6 @@ class TimerProvider extends ChangeNotifier {
     for (final timer in _timers) {
       timer.remainingSeconds = timer.totalSeconds;
       timer.status = TimerStatus.idle;
-      timer.isEnabled = true;
     }
     notifyListeners();
   }
@@ -129,7 +105,6 @@ class TimerProvider extends ChangeNotifier {
   }
 
   bool get anyRunning => _timers.any((t) => t.isRunning);
-  bool get anyEnabled => _timers.any((t) => t.isEnabled && !t.isFinished);
 
   @override
   void dispose() {

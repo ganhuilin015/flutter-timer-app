@@ -6,7 +6,6 @@ class TimerItem {
   int totalSeconds;
   int remainingSeconds;
   TimerStatus status;
-  bool isEnabled;
   String color;
 
   TimerItem({
@@ -15,7 +14,6 @@ class TimerItem {
     required this.totalSeconds,
     int? remainingSeconds,
     this.status = TimerStatus.idle,
-    this.isEnabled = true,
     this.color = '#00E5CC',
   }) : remainingSeconds = remainingSeconds ?? totalSeconds;
 
@@ -65,7 +63,6 @@ class TimerItem {
       totalSeconds: totalSeconds ?? this.totalSeconds,
       remainingSeconds: remainingSeconds ?? this.remainingSeconds,
       status: status ?? this.status,
-      isEnabled: isEnabled ?? this.isEnabled,
       color: color ?? this.color,
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:timer/providers/theme_provider.dart';
 import 'providers/timer_provider.dart';
 // import 'providers/stopwatch_provider.dart';
 // import 'providers/alarm_provider.dart';
@@ -30,16 +31,26 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => TimerProvider()),
         // ChangeNotifierProvider(create: (_) => StopwatchProvider()),
         // ChangeNotifierProvider(create: (_) => AlarmProvider()),
         // ChangeNotifierProvider(create: (_) => WorldClockProvider()),
       ],
-      child: MaterialApp(
-        title: 'Chrono',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.darkTheme,
-        home: const HomeScreen(),
+
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, child) {
+          return MaterialApp(
+            title: 'Chrono',
+            debugShowCheckedModeBanner: false,
+
+            theme: AppTheme.light,
+            darkTheme: AppTheme.dark,
+            themeMode: themeProvider.themeMode,
+
+            home: const HomeScreen(),
+          );
+        },
       ),
     );
   }

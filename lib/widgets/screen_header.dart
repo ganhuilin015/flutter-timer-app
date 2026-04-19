@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
+import 'package:timer/providers/theme_provider.dart';
+import 'package:provider/provider.dart';
 
 class ScreenHeader extends StatelessWidget {
   final String title;
@@ -15,6 +16,8 @@ class ScreenHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final color = context.watch<ThemeProvider>();
+
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
       child: Row(
@@ -24,8 +27,8 @@ class ScreenHeader extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: const TextStyle(
-                  color: AppTheme.textPrimary,
+                style: TextStyle(
+                  color: color.onSurface(context),
                   fontSize: 22,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 3,
@@ -34,8 +37,8 @@ class ScreenHeader extends StatelessWidget {
               const SizedBox(height: 2),
               Text(
                 subtitle,
-                style: const TextStyle(
-                  color: AppTheme.textSecondary,
+                style: TextStyle(
+                  color: color.onSurface(context),
                   fontSize: 12,
                   letterSpacing: 0.5,
                 ),
@@ -43,10 +46,21 @@ class ScreenHeader extends StatelessWidget {
             ],
           ),
           const Spacer(),
-          ...actions.map((a) => Padding(
-                padding: const EdgeInsets.only(left: 8),
-                child: a,
-              )),
+          ...actions.map(
+            (a) => Padding(padding: const EdgeInsets.only(left: 8), child: a),
+          ),
+          IconButton(
+            icon: Icon(
+              context.read<ThemeProvider>().isDark(context)
+                  ? Icons.dark_mode
+                  : Icons.light_mode,
+            ),
+            onPressed: () {
+              final provider = context.read<ThemeProvider>();
+              final isDark = provider.isDark(context);
+              provider.toggleTheme(!isDark);
+            },
+          ),
         ],
       ),
     );

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:timer/providers/theme_provider.dart';
 import '../models/timer_item.dart';
 import '../providers/timer_provider.dart';
-import '../theme/app_theme.dart';
 import 'color_utils.dart';
 import 'add_timer_sheet.dart';
 
@@ -14,6 +14,7 @@ class TimerCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = hexToColor(timer.color);
     final provider = context.read<TimerProvider>();
+    final themeColor = context.watch<ThemeProvider>();
 
     return Dismissible(
       key: ValueKey(timer.id),
@@ -22,144 +23,111 @@ class TimerCard extends StatelessWidget {
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
         decoration: BoxDecoration(
-          color: AppTheme.danger.withOpacity(0.15),
+          color: themeColor.error(context),
           borderRadius: BorderRadius.circular(16),
         ),
-        child: const Icon(Icons.delete_outline_rounded, color: AppTheme.danger),
+        child: Icon(
+          Icons.delete_outline_rounded,
+          color: themeColor.onError(context),
+        ),
       ),
       onDismissed: (_) => provider.removeTimer(timer.id),
       child: GestureDetector(
         onLongPress: () => _showEditSheet(context),
         child: Container(
           decoration: BoxDecoration(
-            color: AppTheme.surface,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: timer.isRunning
-                  ? color.withOpacity(0.5)
-                  : timer.isFinished
-                      ? AppTheme.danger.withOpacity(0.4)
-                      : AppTheme.border,
-              width: timer.isRunning ? 1.5 : 1,
-            ),
+            color: themeColor.secondary(context),
+            borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
             children: [
-              // Progress bar
-              ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
-                child: SizedBox(
-                  height: 3,
-                  child: LinearProgressIndicator(
-                    value: timer.progress,
-                    backgroundColor: AppTheme.border,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      timer.isFinished ? AppTheme.danger : color,
-                    ),
-                  ),
-                ),
-              ),
               Padding(
                 padding: const EdgeInsets.all(16),
-                child: Column(
+                child: Row(
                   children: [
-                    Row(
-                      children: [
-                        // Color dot
-                        Container(
-                          width: 10,
-                          height: 10,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: timer.isFinished ? AppTheme.danger : color,
-                            boxShadow: timer.isRunning
-                                ? [BoxShadow(color: color.withOpacity(0.5), blurRadius: 6)]
-                                : null,
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            timer.name,
-                            style: const TextStyle(
-                              color: AppTheme.textPrimary,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        // Status chip
-                        _StatusChip(timer: timer),
-                        const SizedBox(width: 12),
-                        // Enable toggle
-                        Transform.scale(
-                          scale: 0.85,
-                          child: Switch(
-                            value: timer.isEnabled,
-                            onChanged: (_) => provider.toggleEnabled(timer.id),
-                            activeColor: color,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        // Time display
-                        Text(
-                          timer.formattedTime,
-                          style: TextStyle(
-                            color: timer.isFinished
-                                ? AppTheme.danger
-                                : timer.isRunning
-                                    ? color
-                                    : AppTheme.textPrimary,
-                            fontSize: 38,
-                            fontWeight: FontWeight.w300,
-                            letterSpacing: 2,
-                            fontFeatures: const [FontFeature.tabularFigures()],
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 6),
-                          child: Text(
-                            '/ ${timer.formattedTotal}',
-                            style: const TextStyle(
-                              color: AppTheme.textMuted,
-                              fontSize: 12,
+                    const SizedBox(width: 12),
+
+                    Expanded(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            timer.formattedTime,
+                            style: TextStyle(
+                              color: timer.isFinished
+                                  ? themeColor.error(context)
+                                  : timer.isRunning
+                                  ? color
+                                  : themeColor.onSurface(context),
+                              fontSize: 38,
+                              fontWeight: FontWeight.w300,
+                              letterSpacing: 2,
+                              fontFeatures: const [
+                                FontFeature.tabularFigures(),
+                              ],
                             ),
                           ),
-                        ),
-                        const Spacer(),
-                        // Action buttons
-                        Row(
-                          children: [
-                            if (!timer.isFinished) ...[
+
+                          const SizedBox(width: 8),
+
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 6),
+                            child: Text(
+                              '/ ${timer.formattedTotal}',
+                              style: TextStyle(
+                                color: themeColor.onSurface(context),
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+
+                          const Spacer(),
+                          const SizedBox(width: 10),
+
+                          Row(
+                            children: [
+                              Text(
+                                timer.name,
+                                style: TextStyle(
+                                  color: themeColor.onSurface(context),
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+
+                              const SizedBox(width: 40),
                               _CircleBtn(
                                 icon: timer.isRunning
                                     ? Icons.pause_rounded
                                     : Icons.play_arrow_rounded,
                                 color: color,
-                                onTap: () => timer.isRunning
-                                    ? provider.pauseTimer(timer.id)
-                                    : provider.startTimer(timer.id),
-                                enabled: timer.isEnabled || timer.isRunning,
+                                iconColor: themeColor.onSecondary(context),
+                                onTap: () {
+                                  if (timer.isRunning) {
+                                    provider.pauseTimer(timer.id);
+                                  } 
+                                  else if (timer.isFinished) {
+                                    provider.resetTimer(timer.id);
+                                    provider.startTimer(timer.id);
+                                  } 
+                                  else {
+                                    provider.startTimer(timer.id);
+                                  }
+                                }
                               ),
-                              const SizedBox(width: 8),
+                              const SizedBox(width: 10),
+                              _CircleBtn(
+                                icon: Icons.refresh_rounded,
+                                color: themeColor.secondary(context),
+                                iconColor: themeColor.onSurface(context),
+                                onTap: () => provider.resetTimer(timer.id),
+                                small: true,
+                              ),
                             ],
-                            _CircleBtn(
-                              icon: Icons.refresh_rounded,
-                              color: AppTheme.textSecondary,
-                              onTap: () => provider.resetTimer(timer.id),
-                              enabled: true,
-                              small: true,
-                            ),
-                          ],
-                        ),
-                      ],
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -181,67 +149,38 @@ class TimerCard extends StatelessWidget {
   }
 }
 
-class _StatusChip extends StatelessWidget {
-  final TimerItem timer;
-  const _StatusChip({required this.timer});
-
-  @override
-  Widget build(BuildContext context) {
-    final (label, color) = switch (timer.status) {
-      TimerStatus.running => ('RUNNING', AppTheme.success),
-      TimerStatus.paused => ('PAUSED', AppTheme.accentAmber),
-      TimerStatus.finished => ('DONE', AppTheme.danger),
-      TimerStatus.idle => ('IDLE', AppTheme.textMuted),
-    };
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.12),
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: color.withOpacity(0.3)),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(color: color, fontSize: 9, fontWeight: FontWeight.w700, letterSpacing: 1),
-      ),
-    );
-  }
-}
-
 class _CircleBtn extends StatelessWidget {
   final IconData icon;
   final Color color;
+  final Color iconColor;
   final VoidCallback onTap;
-  final bool enabled;
   final bool small;
 
   const _CircleBtn({
     required this.icon,
     required this.color,
+    required this.iconColor,
     required this.onTap,
-    required this.enabled,
     this.small = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    final size = small ? 32.0 : 40.0;
-    final iconSize = small ? 16.0 : 20.0;
+    final size = small ? 32.0 : 50.0;
+    final iconSize = small ? 18.0 : 30.0;
+
     return GestureDetector(
-      onTap: enabled ? onTap : null,
+      onTap: onTap,
       child: Container(
         width: size,
         height: size,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: enabled ? color.withOpacity(0.15) : AppTheme.border.withOpacity(0.3),
-          border: Border.all(
-            color: enabled ? color.withOpacity(0.4) : AppTheme.border.withOpacity(0.3),
-          ),
+          color: color,
         ),
         child: Icon(
           icon,
-          color: enabled ? color : AppTheme.textMuted,
+          color: iconColor,
           size: iconSize,
         ),
       ),
