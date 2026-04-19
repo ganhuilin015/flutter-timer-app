@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:timer/providers/theme_provider.dart';
-import 'package:timer/utils/responsive.dart';
 import 'package:uuid/uuid.dart';
 import '../models/timer_item.dart';
 import '../providers/timer_provider.dart';
@@ -128,7 +127,7 @@ class _AddTimerSheetState extends State<AddTimerSheet> {
             isEdit ? 'Edit Timer' : 'New Timer',
             style: TextStyle(
               color: color.primary(context),
-              fontSize: responsiveSize(context, 7),
+              fontSize: 17,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -149,7 +148,7 @@ class _AddTimerSheetState extends State<AddTimerSheet> {
             'Duration',
             style: TextStyle(
               color: color.onSurface(context),
-              fontSize: responsiveSize(context, 5),
+              fontSize: 12,
               letterSpacing: 0.5,
             ),
           ),

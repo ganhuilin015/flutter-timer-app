@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:timer/providers/theme_provider.dart';
 import '../providers/timer_provider.dart';
-import '../models/timer_item.dart';
-import '../theme/app_theme.dart';
 import '../widgets/timer_card.dart';
 import '../widgets/add_timer_sheet.dart';
 import '../widgets/screen_header.dart';

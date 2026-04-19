@@ -33,7 +33,7 @@ class TimerCard extends StatelessWidget {
       ),
       onDismissed: (_) => provider.removeTimer(timer.id),
       child: GestureDetector(
-        onLongPress: () => _showEditSheet(context),
+        onTap: () => _showEditSheet(context),
         child: Container(
           decoration: BoxDecoration(
             color: themeColor.secondary(context),
