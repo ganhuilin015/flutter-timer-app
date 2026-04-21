@@ -3,29 +3,29 @@ import 'package:provider/provider.dart';
 import 'package:timer/providers/theme_provider.dart';
 import 'package:timer/widgets/empty_state.dart';
 import 'package:timer/widgets/global_action.dart';
-import '../providers/timer_provider.dart';
-import '../widgets/timer_card.dart';
-import '../widgets/add_timer_sheet.dart';
+import '../providers/stopwatch_provider.dart';
+import '../widgets/stopwatch_card.dart';
+import '../widgets/add_stopwatch_sheet.dart';
 import '../widgets/screen_header.dart';
 
-class TimerScreen extends StatelessWidget {
-  const TimerScreen({super.key});
+class StopwatchScreen extends StatelessWidget {
+  const StopwatchScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final color = context.watch<ThemeProvider>();
-    return Consumer<TimerProvider>(
+
+    return Consumer<StopwatchProvider>(
       builder: (context, provider, _) {
         return Scaffold(
-          backgroundColor: color.background(context),
+          backgroundColor: color.surface(context),
           body: SafeArea(
             child: Column(
               children: [
                 ScreenHeader(
-                  title: 'TIMER',
-                  subtitle:
-                      '${provider.timers.where((t) => t.isRunning).length} running',
-                  actions: provider.timers.isEmpty
+                  title: 'STOPWATCH',
+                  subtitle: '${provider.stopwatches.where((s) => s.isRunning).length} running',
+                  actions: provider.stopwatches.isEmpty
                       ? []
                       : [
                           GlobalAction(
@@ -49,22 +49,21 @@ class TimerScreen extends StatelessWidget {
                         ],
                 ),
                 Expanded(
-                  child: provider.timers.isEmpty
-                      ? EmptyState(
-                          onAdd: () => _showAddSheet(context),
-                          title: 'No timers yet',
-                          subtitle: 'Add a timer to get started.\nYou can run multiple timers at once.',
-                          buttonText: 'Add Timer',
-                          icon: Icons.timer_outlined,
-                        )
+                  child: provider.stopwatches.isEmpty
+                      ?  EmptyState(
+                            onAdd: () => _showAddSheet(context),
+                            title: 'No stopwatches yet',
+                            subtitle: 'Track multiple activities simultaneously\nwith named stopwatches.',
+                            buttonText: 'Add Stopwatch',
+                            icon: Icons.av_timer_outlined,
+                          )
                       : ListView.builder(
                           padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
-                          itemCount: provider.timers.length,
+                          itemCount: provider.stopwatches.length,
                           itemBuilder: (context, i) {
-                            final timer = provider.timers[i];
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 12),
-                              child: TimerCard(timer: timer),
+                              child: StopwatchCard(entry: provider.stopwatches[i]),
                             );
                           },
                         ),
@@ -74,6 +73,7 @@ class TimerScreen extends StatelessWidget {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () => _showAddSheet(context),
+            backgroundColor: color.primary(context),
             child: const Icon(Icons.add_rounded),
           ),
         );
@@ -86,7 +86,7 @@ class TimerScreen extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => const AddTimerSheet(),
+      builder: (_) => const AddStopwatchSheet(),
     );
   }
 }

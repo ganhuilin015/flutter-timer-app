@@ -58,7 +58,7 @@ class _AddTimerSheetState extends State<AddTimerSheet> {
 
   void _save() {
     final name = _nameCtrl.text.trim().isEmpty
-        ? 'Timer'
+        ? ''
         : _nameCtrl.text.trim();
     final total = _totalSeconds;
     final color = context.read<ThemeProvider>();

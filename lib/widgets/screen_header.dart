@@ -19,7 +19,7 @@ class ScreenHeader extends StatelessWidget {
     final color = context.watch<ThemeProvider>();
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 22),
       child: Row(
         children: [
           Column(
@@ -49,6 +49,7 @@ class ScreenHeader extends StatelessWidget {
           ...actions.map(
             (a) => Padding(padding: const EdgeInsets.only(left: 8), child: a),
           ),
+          const SizedBox(width: 20),
           IconButton(
             icon: Icon(
               context.read<ThemeProvider>().isDark(context)

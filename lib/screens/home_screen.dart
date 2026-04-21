@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:timer/providers/theme_provider.dart';
 import 'timer_screen.dart';
 import 'package:provider/provider.dart';
-// import 'stopwatch_screen.dart';
+import 'stopwatch_screen.dart';
 // import 'alarm_screen.dart';
 // import 'world_clock_screen.dart';
 
@@ -70,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         physics: const NeverScrollableScrollPhysics(),
         children: const [
           TimerScreen(),
-          // StopwatchScreen(),
+          StopwatchScreen(),
           // AlarmScreen(),
           // WorldClockScreen(),
         ],

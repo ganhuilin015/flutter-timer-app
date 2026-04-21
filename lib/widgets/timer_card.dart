@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:timer/providers/theme_provider.dart';
+import 'package:timer/widgets/circle_button.dart';
 import '../models/timer_item.dart';
 import '../providers/timer_provider.dart';
 import 'color_utils.dart';
@@ -50,6 +51,7 @@ class TimerCard extends StatelessWidget {
                     Expanded(
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
                             timer.formattedTime,
@@ -97,7 +99,7 @@ class TimerCard extends StatelessWidget {
                               ),
 
                               const SizedBox(width: 40),
-                              _CircleBtn(
+                              CircleBtn(
                                 icon: timer.isRunning
                                     ? Icons.pause_rounded
                                     : Icons.play_arrow_rounded,
@@ -117,7 +119,7 @@ class TimerCard extends StatelessWidget {
                                 }
                               ),
                               const SizedBox(width: 10),
-                              _CircleBtn(
+                              CircleBtn(
                                 icon: Icons.refresh_rounded,
                                 color: themeColor.secondary(context),
                                 iconColor: themeColor.onSurface(context),
@@ -149,41 +151,3 @@ class TimerCard extends StatelessWidget {
   }
 }
 
-class _CircleBtn extends StatelessWidget {
-  final IconData icon;
-  final Color color;
-  final Color iconColor;
-  final VoidCallback onTap;
-  final bool small;
-
-  const _CircleBtn({
-    required this.icon,
-    required this.color,
-    required this.iconColor,
-    required this.onTap,
-    this.small = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final size = small ? 32.0 : 50.0;
-    final iconSize = small ? 18.0 : 30.0;
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: color,
-        ),
-        child: Icon(
-          icon,
-          color: iconColor,
-          size: iconSize,
-        ),
-      ),
-    );
-  }
-}

@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:timer/providers/theme_provider.dart';
 import 'providers/timer_provider.dart';
-// import 'providers/stopwatch_provider.dart';
+import 'providers/stopwatch_provider.dart';
 // import 'providers/alarm_provider.dart';
 // import 'providers/world_clock_provider.dart';
 import 'screens/home_screen.dart';
@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => TimerProvider()),
-        // ChangeNotifierProvider(create: (_) => StopwatchProvider()),
+        ChangeNotifierProvider(create: (_) => StopwatchProvider()),
         // ChangeNotifierProvider(create: (_) => AlarmProvider()),
         // ChangeNotifierProvider(create: (_) => WorldClockProvider()),
       ],
