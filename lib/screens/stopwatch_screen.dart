@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:timer/providers/theme_provider.dart';
 import 'package:timer/widgets/empty_state.dart';
-import 'package:timer/widgets/global_action.dart';
 import '../providers/stopwatch_provider.dart';
 import '../widgets/stopwatch_card.dart';
 import '../widgets/add_stopwatch_sheet.dart';

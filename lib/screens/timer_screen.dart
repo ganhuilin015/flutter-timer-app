@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:timer/providers/theme_provider.dart';
 import 'package:timer/widgets/empty_state.dart';
-import 'package:timer/widgets/global_action.dart';
 import '../providers/timer_provider.dart';
 import '../widgets/timer_card.dart';
 import '../widgets/add_timer_sheet.dart';

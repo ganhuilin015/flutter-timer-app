@@ -95,33 +95,6 @@ class StopwatchProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void startAll() {
-    for (final sw in _stopwatches) {
-      if (sw.isEnabled && !sw.isRunning) {
-        sw.isRunning = true;
-        sw.startedAt = DateTime.now();
-      }
-    }
-    notifyListeners();
-  }
-
-  void pauseAll() {
-    for (final sw in _stopwatches) {
-      _pause(sw);
-    }
-    notifyListeners();
-  }
-
-  void resetAll() {
-    for (final sw in _stopwatches) {
-      _pause(sw);
-      sw.elapsedMilliseconds = 0;
-      sw.accumulatedMs = 0;
-      sw.laps.clear();
-    }
-    notifyListeners();
-  }
-
   bool get anyRunning => _stopwatches.any((s) => s.isRunning);
 
   @override

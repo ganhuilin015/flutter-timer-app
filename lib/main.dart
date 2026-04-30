@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:timer/providers/theme_provider.dart';
+import 'package:timer/services/notification_service.dart';
 import 'providers/timer_provider.dart';
 import 'providers/stopwatch_provider.dart';
 import 'providers/alarm_provider.dart';
@@ -10,31 +11,8 @@ import 'providers/alarm_provider.dart';
 import 'screens/home_screen.dart';
 import 'theme/app_theme.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-
-
-Future<void> _initNotifications() async {
-  final notifications = FlutterLocalNotificationsPlugin();
-  await notifications.initialize(
-    const InitializationSettings(
-      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-    ),
-  );
-
-  const AndroidNotificationChannel channel = AndroidNotificationChannel(
-    'alarm_channel',
-    'Alarms',
-    description: 'Alarm notifications',
-    importance: Importance.max,
-    playSound: true,
-  );
-
-  await notifications
-      .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
-      ?.createNotificationChannel(channel);
-}
 
 Future<void> _requestAndroidPermissions() async {
   if (!Platform.isAndroid) return;
@@ -63,7 +41,8 @@ void main() async {
       statusBarIconBrightness: Brightness.light,
     ),
   );
-  await _initNotifications(); 
+
+  await NotificationService.init();
   await _requestAndroidPermissions();
 
   runApp(const MyApp());
