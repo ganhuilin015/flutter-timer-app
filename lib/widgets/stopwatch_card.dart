@@ -46,20 +46,30 @@ class _StopwatchCardState extends State<StopwatchCard> {
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (entry.name.trim().isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 12, left: 20, right: 16),
+              child: Text(
+                entry.name,
+                style: TextStyle(
+                  color: themeColor.onSurface(context),
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  const SizedBox(width: 12),
-
                   Expanded(
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const SizedBox(width: 8),
-
                         Text(
                           entry.formattedTime,
                           style: TextStyle(
@@ -73,48 +83,11 @@ class _StopwatchCardState extends State<StopwatchCard> {
                           ),
                         ),
 
-                        const SizedBox(width: 15),
-
-                        if (entry.laps.isNotEmpty)
-                          GestureDetector(
-                            onTap: () => setState(() => _showLaps = !_showLaps),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 3,
-                              ),
-                              decoration: BoxDecoration(
-                                color: color,
-                                borderRadius: BorderRadius.circular(6),
-                                border: Border.all(color: color),
-                              ),
-                              child: Text(
-                                '${entry.laps.length} lap${entry.laps.length == 1 ? '' : 's'}',
-                                style: TextStyle(
-                                  color: themeColor.onPrimary(context),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ),
-
                         const Spacer(),
-                        const SizedBox(width: 10),
+                        const SizedBox(width: 5),
 
                         Row(
                           children: [
-                            Text(
-                              entry.name,
-                              style: TextStyle(
-                                color: themeColor.onSurface(context),
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-
-                            const SizedBox(width: 40),
                             if (entry.isRunning) ...[
                               CircleBtn(
                                 icon: Icons.flag_outlined,
@@ -125,7 +98,7 @@ class _StopwatchCardState extends State<StopwatchCard> {
                               ),
                             ],
 
-                            const SizedBox(width: 20),
+                            const SizedBox(width: 5),
                             CircleBtn(
                               icon: entry.isRunning
                                   ? Icons.pause_rounded
@@ -140,7 +113,7 @@ class _StopwatchCardState extends State<StopwatchCard> {
                                 }
                               },
                             ),
-                            const SizedBox(width: 10),
+                            const SizedBox(width: 5),
                             CircleBtn(
                               icon: Icons.refresh_rounded,
                               color: themeColor.secondary(context),
@@ -156,6 +129,34 @@ class _StopwatchCardState extends State<StopwatchCard> {
                 ],
               ),
             ),
+
+            if (entry.laps.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(left: 16, bottom: 16),
+              child: GestureDetector(
+                onTap: () => setState(() => _showLaps = !_showLaps),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
+                  decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(color: color),
+                  ),
+                  child: Text(
+                    '${entry.laps.length} lap${entry.laps.length == 1 ? '' : 's'}',
+                    style: TextStyle(
+                      color: themeColor.onPrimary(context),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
             // Laps section
             if (_showLaps && entry.laps.isNotEmpty) ...[
 
@@ -200,7 +201,7 @@ class _StopwatchCardState extends State<StopwatchCard> {
                     SizedBox(
                       width: 80,
                       child: Text(
-                        'Overall Time',
+                        'Total',
                         textAlign: TextAlign.end,
                         style: TextStyle(
                           color: themeColor

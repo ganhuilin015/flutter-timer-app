@@ -46,9 +46,6 @@ class ScreenHeader extends StatelessWidget {
             ],
           ),
           const Spacer(),
-          ...actions.map(
-            (a) => Padding(padding: const EdgeInsets.only(left: 8), child: a),
-          ),
           const SizedBox(width: 20),
           IconButton(
             icon: Icon(

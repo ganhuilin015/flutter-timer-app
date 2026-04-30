@@ -24,29 +24,7 @@ class TimerScreen extends StatelessWidget {
                 ScreenHeader(
                   title: 'TIMER',
                   subtitle:
-                      '${provider.timers.where((t) => t.isRunning).length} running',
-                  actions: provider.timers.isEmpty
-                      ? []
-                      : [
-                          GlobalAction(
-                            icon: provider.anyRunning
-                                ? Icons.pause_rounded
-                                : Icons.play_arrow_rounded,
-                            label: provider.anyRunning
-                                ? 'Pause All'
-                                : 'Start All',
-                            color: color.onSurface(context),
-                            onTap: () => provider.anyRunning
-                                ? provider.pauseAll()
-                                : provider.startAll(),
-                          ),
-                          GlobalAction(
-                            icon: Icons.refresh_rounded,
-                            label: 'Reset All',
-                            color: color.onSurface(context),
-                            onTap: provider.resetAll,
-                          ),
-                        ],
+                      '${provider.timers.where((t) => t.isRunning).length} running'
                 ),
                 Expanded(
                   child: provider.timers.isEmpty

@@ -41,13 +41,27 @@ class TimerCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              if (timer.name.trim().isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 12, left: 16, right: 16),
+                child: Text(
+                  timer.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: themeColor.onSurface(context),
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    const SizedBox(width: 12),
-
                     Expanded(
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
@@ -61,7 +75,7 @@ class TimerCard extends StatelessWidget {
                                   : timer.isRunning
                                   ? color
                                   : themeColor.onSurface(context),
-                              fontSize: 38,
+                              fontSize: 30,
                               fontWeight: FontWeight.w300,
                               letterSpacing: 2,
                               fontFeatures: const [
@@ -88,17 +102,6 @@ class TimerCard extends StatelessWidget {
 
                           Row(
                             children: [
-                              Text(
-                                timer.name,
-                                style: TextStyle(
-                                  color: themeColor.onSurface(context),
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-
-                              const SizedBox(width: 40),
                               CircleBtn(
                                 icon: timer.isRunning
                                     ? Icons.pause_rounded
@@ -118,7 +121,7 @@ class TimerCard extends StatelessWidget {
                                   }
                                 }
                               ),
-                              const SizedBox(width: 10),
+                              const SizedBox(width: 5),
                               CircleBtn(
                                 icon: Icons.refresh_rounded,
                                 color: themeColor.secondary(context),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:timer/providers/theme_provider.dart';
+import 'package:timer/utils/show_top_message.dart';
 import 'package:uuid/uuid.dart';
 import '../models/timer_item.dart';
 import '../providers/timer_provider.dart';
@@ -57,18 +58,11 @@ class _AddTimerSheetState extends State<AddTimerSheet> {
   }
 
   void _save() {
-    final name = _nameCtrl.text.trim().isEmpty
-        ? ''
-        : _nameCtrl.text.trim();
+    final name = _nameCtrl.text.trim().isEmpty ? '' : _nameCtrl.text.trim();
     final total = _totalSeconds;
-    final color = context.read<ThemeProvider>();
+
     if (total <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Please set a duration greater than 0'),
-          backgroundColor: color.error(context),
-        ),
-      );
+      showTopMessage(context, 'Please set a duration greater than 0.');
       return;
     }
     final provider = context.read<TimerProvider>();
@@ -202,7 +196,7 @@ class _AddTimerSheetState extends State<AddTimerSheet> {
               onPressed: _save,
               style: ElevatedButton.styleFrom(
                 backgroundColor: color.primary(context),
-                foregroundColor: color.onPrimary(context)
+                foregroundColor: color.onPrimary(context),
               ),
               child: Text(isEdit ? 'Save Changes' : 'Add Timer'),
             ),

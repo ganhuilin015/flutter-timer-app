@@ -278,7 +278,7 @@ class _AddAlarmSheetState extends State<AddAlarmSheet> {
             ),
             const SizedBox(height: 10),
             Row(
-              spacing: 20,
+              spacing: 10,
               children: List.generate(7, (i) {
                 final active = _repeatDays[i];
                 return GestureDetector(

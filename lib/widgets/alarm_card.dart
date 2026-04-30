@@ -46,6 +46,20 @@ class AlarmCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      if (alarm.name.trim().isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2, bottom: 8, right: 5),
+                        child: Text(
+                          alarm.name,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: TextStyle(
+                            color: themeColor.onSurface(context),
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
                       Row(
                         children: [
                           Text(
@@ -56,22 +70,6 @@ class AlarmCard extends StatelessWidget {
                               fontWeight: FontWeight.w300,
                             ),
                           ),
-
-                          const SizedBox(width: 12),
-                          SizedBox(
-                            width: 120,
-                            child: Text(
-                              alarm.name,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                              style: TextStyle(
-                                color: themeColor.onSurface(context),
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-
                           const Spacer(),
 
                           Row(

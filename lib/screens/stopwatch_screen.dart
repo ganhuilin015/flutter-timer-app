@@ -24,29 +24,7 @@ class StopwatchScreen extends StatelessWidget {
               children: [
                 ScreenHeader(
                   title: 'STOPWATCH',
-                  subtitle: '${provider.stopwatches.where((s) => s.isRunning).length} running',
-                  actions: provider.stopwatches.isEmpty
-                      ? []
-                      : [
-                          GlobalAction(
-                            icon: provider.anyRunning
-                                ? Icons.pause_rounded
-                                : Icons.play_arrow_rounded,
-                            label: provider.anyRunning
-                                ? 'Pause All'
-                                : 'Start All',
-                            color: color.onSurface(context),
-                            onTap: () => provider.anyRunning
-                                ? provider.pauseAll()
-                                : provider.startAll(),
-                          ),
-                          GlobalAction(
-                            icon: Icons.refresh_rounded,
-                            label: 'Reset All',
-                            color: color.onSurface(context),
-                            onTap: provider.resetAll,
-                          ),
-                        ],
+                  subtitle: '${provider.stopwatches.where((s) => s.isRunning).length} running'
                 ),
                 Expanded(
                   child: provider.stopwatches.isEmpty
