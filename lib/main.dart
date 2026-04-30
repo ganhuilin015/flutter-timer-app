@@ -10,6 +10,30 @@ import 'providers/alarm_provider.dart';
 import 'screens/home_screen.dart';
 import 'theme/app_theme.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
+
+Future<void> _initNotifications() async {
+  final notifications = FlutterLocalNotificationsPlugin();
+  await notifications.initialize(
+    const InitializationSettings(
+      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+    ),
+  );
+
+  const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    'alarm_channel',
+    'Alarms',
+    description: 'Alarm notifications',
+    importance: Importance.max,
+    playSound: true,
+  );
+
+  await notifications
+      .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(channel);
+}
 
 Future<void> _requestAndroidPermissions() async {
   if (!Platform.isAndroid) return;
@@ -19,10 +43,14 @@ Future<void> _requestAndroidPermissions() async {
   if (!exactAlarmStatus.isGranted) {
     await Permission.scheduleExactAlarm.request();
   }
+  await Permission.ignoreBatteryOptimizations.request();
 }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  tz.initializeTimeZones();
+  tz.setLocalLocation(tz.getLocation('Asia/Kuala_Lumpur'));
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -34,13 +62,14 @@ void main() async {
       statusBarIconBrightness: Brightness.light,
     ),
   );
-
+  await _initNotifications(); 
   await _requestAndroidPermissions();
 
   runApp(const MyApp());
 }
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 

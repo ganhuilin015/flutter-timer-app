@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:timer/services/alarm_service.dart';
 import '../models/alarm_item.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 class AlarmProvider extends ChangeNotifier {
   final List<AlarmItem> _alarms = [];
@@ -68,18 +69,40 @@ class AlarmProvider extends ChangeNotifier {
 
   Future<void> _scheduleNative(AlarmItem alarm) async {
     final nativeId = _nativeId(alarm.id);
-    final trigger  = alarm.nextTrigger;
-    await NativeAlarmService.scheduleAlarm(
-      id: nativeId,
-      triggerTime: trigger,
-      title: alarm.name.isEmpty ? 'Alarm' : alarm.name,
-      body: 'Alarm is ringing – ${alarm.formattedTime}',
-      sound: alarm.sound,
+    final trigger = alarm.nextTrigger;
+    final notifications = FlutterLocalNotificationsPlugin();
+    await notifications.initialize(
+      const InitializationSettings(
+        android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+      ),
     );
+
+    await notifications.zonedSchedule(
+      nativeId,
+      alarm.name.isEmpty ? 'Alarm' : alarm.name,
+      'Alarm is ringing – ${alarm.formattedTime}',
+      tz.TZDateTime.from(trigger, tz.local),
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'alarm_channel',
+          'Alarms',
+          channelDescription: 'Alarm notifications',
+          importance: Importance.max,
+          priority: Priority.high,
+          fullScreenIntent: true,
+          playSound: true,
+        ),
+      ),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+    );
+
   }
 
   Future<void> _cancelNative(AlarmItem alarm) async {
-    await NativeAlarmService.cancelAlarm(_nativeId(alarm.id));
+    final notifications = FlutterLocalNotificationsPlugin();
+    await notifications.cancel(_nativeId(alarm.id));
   }
 
   int _nativeId(String uuid) => uuid.hashCode.abs() % 100000;
