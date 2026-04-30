@@ -119,7 +119,7 @@ class _StopwatchCardState extends State<StopwatchCard> {
                               CircleBtn(
                                 icon: Icons.flag_outlined,
                                 color: color,
-                                iconColor: themeColor.onSecondary(context),
+                                iconColor: themeColor.onPrimary(context),
                                 onTap: () => provider.addLap(entry.id),
                                 tooltip: 'Lap',
                               ),
@@ -131,7 +131,7 @@ class _StopwatchCardState extends State<StopwatchCard> {
                                   ? Icons.pause_rounded
                                   : Icons.play_arrow_rounded,
                               color: color,
-                              iconColor: themeColor.onSecondary(context),
+                              iconColor: themeColor.onPrimary(context),
                               onTap: () {
                                 if (entry.isRunning) {
                                   provider.pause(entry.id);

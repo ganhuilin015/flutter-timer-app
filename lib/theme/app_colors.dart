@@ -7,7 +7,8 @@ class AppColors {
   static const lightSecondary = Color(0xFFE8E8E8);
   static const darkSecondary = Color(0xFF454545);
 
-  static const onSecondary = Colors.white;
+  static const onLightSecondary = Color(0xFF121212);
+  static const onDarkSecondary = Colors.white;
 
   static const lightBackground = Colors.white;
   static const darkBackground = Color(0xFF121212);

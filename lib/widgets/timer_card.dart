@@ -104,7 +104,7 @@ class TimerCard extends StatelessWidget {
                                     ? Icons.pause_rounded
                                     : Icons.play_arrow_rounded,
                                 color: color,
-                                iconColor: themeColor.onSecondary(context),
+                                iconColor: themeColor.onPrimary(context),
                                 onTap: () {
                                   if (timer.isRunning) {
                                     provider.pauseTimer(timer.id);

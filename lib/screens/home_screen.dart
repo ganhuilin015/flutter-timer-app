@@ -3,7 +3,7 @@ import 'package:timer/providers/theme_provider.dart';
 import 'timer_screen.dart';
 import 'package:provider/provider.dart';
 import 'stopwatch_screen.dart';
-// import 'alarm_screen.dart';
+import 'alarm_screen.dart';
 // import 'world_clock_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -55,11 +55,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void _onTabTapped(int index) {
     if (_currentIndex == index) return;
     setState(() => _currentIndex = index);
-    _pageController.animateToPage(
-      index,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
+    _pageController.jumpToPage(index);
   }
 
   @override
@@ -71,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         children: const [
           TimerScreen(),
           StopwatchScreen(),
-          // AlarmScreen(),
+          AlarmScreen(),
           // WorldClockScreen(),
         ],
       ),
@@ -83,9 +79,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     final themeColor = context.watch<ThemeProvider>();
 
     return Container(
-      decoration: BoxDecoration(
-        color: themeColor.surface(context),
-      ),
+      decoration: BoxDecoration(color: themeColor.surface(context)),
       child: SafeArea(
         top: false,
         child: SizedBox(
