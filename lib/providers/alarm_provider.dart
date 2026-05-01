@@ -7,23 +7,50 @@ class AlarmProvider extends ChangeNotifier {
   final List<AlarmItem> _alarms = [];
   Timer? _ticker;
   AlarmItem? _firingAlarm;
+  final Set<String> _firedKeys = {};
 
   List<AlarmItem> get alarms => List.unmodifiable(_alarms);
   AlarmItem? get firingAlarm => _firingAlarm;
 
   AlarmProvider() {
-    _ticker = Timer.periodic(const Duration(seconds: 10), (_) => _checkAlarms());
+    _ticker = Timer.periodic(const Duration(seconds: 1), (_) => _checkAlarms());
+  }
+
+  String _alarmKey(AlarmItem alarm) {
+    final now = DateTime.now();
+    return '${alarm.id}_${now.year}_${now.month}_${now.day}_${alarm.hour}_${alarm.minute}';
   }
 
   void _checkAlarms() {
+    cleanupOldFired();
+    
     final now = DateTime.now();
     for (final alarm in _alarms) {
       if (!alarm.isEnabled) continue;
-      if (alarm.hour == now.hour && alarm.minute == now.minute && now.second < 15) {
-        _firingAlarm = alarm;
-        notifyListeners();
+      if (alarm.hour == now.hour && alarm.minute == now.minute && now.second < 10) {
+        final key = _alarmKey(alarm);
+
+        if (!_firedKeys.contains(key)) {
+          _firedKeys.add(key);
+          _firingAlarm = alarm;
+          notifyListeners();
+        }
       }
     }
+  }
+
+  void cleanupOldFired() {
+    final now = DateTime.now();
+
+    _firedKeys.removeWhere((key) {
+      final parts = key.split('_');
+      if (parts.length < 6) return true;
+
+      final hour = int.parse(parts[4]);
+      final minute = int.parse(parts[5]);
+
+      return now.hour != hour || now.minute != minute;
+    });
   }
 
   void dismissFiring() {
@@ -31,7 +58,7 @@ class AlarmProvider extends ChangeNotifier {
     notifyListeners();
   }
 
- Future<void> addAlarm(AlarmItem alarm) async {
+  Future<void> addAlarm(AlarmItem alarm) async {
     _alarms.add(alarm);
     _alarms.sort((a, b) => (a.hour * 60 + a.minute).compareTo(b.hour * 60 + b.minute));
     if (alarm.isEnabled) await _scheduleNative(alarm);

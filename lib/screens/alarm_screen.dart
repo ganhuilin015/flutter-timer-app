@@ -1,14 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:timer/models/alarm_item.dart';
 import 'package:timer/providers/theme_provider.dart';
 import 'package:timer/widgets/empty_state.dart';
+import 'package:timer/widgets/full_screen_alert.dart';
 import '../providers/alarm_provider.dart';
 import '../widgets/alarm_card.dart';
 import '../widgets/add_alarm_sheet.dart';
 import '../widgets/screen_header.dart';
 
-class AlarmScreen extends StatelessWidget {
+class AlarmScreen extends StatefulWidget {
   const AlarmScreen({super.key});
+
+  @override
+  State<AlarmScreen> createState() => _AlarmScreenState();
+}
+
+class _AlarmScreenState extends State<AlarmScreen> {
+  bool _isShowingAlarm = false;
+
+  void _showAddSheet({AlarmItem? alarm}) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => AddAlarmSheet(existing: alarm),
+    );
+  }
+
+  void _showFiringAlarm(AlarmItem alarm, AlarmProvider provider) {
+    if (_isShowingAlarm) return;
+    _isShowingAlarm = true;
+
+    final data = AlertData(
+      title: alarm.name.isNotEmpty ? alarm.name : 'Alarm',
+      subtitle: alarm.formattedTime,
+      icon: Icons.alarm,
+    );
+
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: false,
+      pageBuilder: (_, __, ___) => FullScreenAlert(
+        data: data,
+        onDismiss: () {
+          provider.dismissFiring();
+          Navigator.pop(context);
+          _isShowingAlarm = false;
+        },
+      ),
+    ).then((_) => _isShowingAlarm = false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,10 +58,12 @@ class AlarmScreen extends StatelessWidget {
 
     return Consumer<AlarmProvider>(
       builder: (context, provider, _) {
-        // Show firing alarm dialog
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (provider.firingAlarm != null) {
-            _showFiringDialog(context, provider);
+          if (!mounted) return;
+
+          final alarm = provider.firingAlarm;
+          if (alarm != null && !_isShowingAlarm) {
+            _showFiringAlarm(alarm, provider);
           }
         });
 
@@ -34,82 +78,32 @@ class AlarmScreen extends StatelessWidget {
                 ),
                 Expanded(
                   child: provider.alarms.isEmpty
-                      ?  EmptyState(
-                            onAdd: () => _showAddSheet(context),
-                            title: 'No alarms set',
-                            subtitle: 'Add an alarm with custom repeat\nschedules and names.',
-                            buttonText: 'Add Alarm',
-                            icon: Icons.av_timer_outlined,
-                          )
+                      ? EmptyState(
+                          onAdd: () => _showAddSheet(),
+                          title: 'No alarms set',
+                          subtitle: 'Add an alarm with custom repeat\nschedules and names.',
+                          buttonText: 'Add Alarm',
+                          icon: Icons.av_timer_outlined,
+                        )
                       : ListView.builder(
                           padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
                           itemCount: provider.alarms.length,
-                          itemBuilder: (context, i) {
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 12),
-                              child: AlarmCard(alarm: provider.alarms[i]),
-                            );
-                          },
+                          itemBuilder: (context, i) => Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: AlarmCard(alarm: provider.alarms[i]),
+                          ),
                         ),
                 ),
               ],
             ),
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: () => _showAddSheet(context),
+            onPressed: () => _showAddSheet(),
             backgroundColor: themeColor.primary(context),
             child: const Icon(Icons.add_rounded),
           ),
         );
       },
-    );
-  }
-
-  void _showAddSheet(BuildContext context, {alarm}) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => AddAlarmSheet(existing: alarm),
-    );
-  }
-
-  void _showFiringDialog(BuildContext context, AlarmProvider provider) {
-    final alarm = provider.firingAlarm!;
-    final themeColor = context.read<ThemeProvider>();
-
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => AlertDialog(
-        backgroundColor: themeColor.onSurface(context),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Row(
-          children: [
-            Icon(Icons.alarm, color: themeColor.primary(context), size: 28),
-            const SizedBox(width: 12),
-            Text(alarm.name, style: TextStyle(color: themeColor.primary(context))),
-          ],
-        ),
-        content: Text(
-          alarm.formattedTime,
-          style: TextStyle(
-            color: themeColor.primary(context),
-            fontSize: 48,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 2,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              provider.dismissFiring();
-              Navigator.pop(context);
-            },
-            child: Text('Dismiss', style: TextStyle(color: themeColor.primary(context))),
-          ),
-        ],
-      ),
     );
   }
 }

@@ -9,6 +9,11 @@ class TimerProvider extends ChangeNotifier {
 
   List<TimerItem> get timers => List.unmodifiable(_timers);
 
+  final List<TimerItem> _firingQueue = [];
+
+  TimerItem? get firingTimer =>
+      _firingQueue.isNotEmpty ? _firingQueue.first : null;
+
   TimerProvider() {
     _startTicker();
   }
@@ -28,11 +33,23 @@ class TimerProvider extends ChangeNotifier {
           changed = true;
         } else {
           timer.status = TimerStatus.finished;
+
+          if (!_firingQueue.contains(timer)) {
+            _firingQueue.add(timer);
+          }
+          
           changed = true;
         }
       }
     }
     if (changed) notifyListeners();
+  }
+
+  void dismissFiring() {
+    if (_firingQueue.isNotEmpty) {
+      _firingQueue.removeAt(0);
+    }
+    notifyListeners();
   }
 
   void addTimer(TimerItem timer) {
