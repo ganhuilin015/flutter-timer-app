@@ -43,7 +43,7 @@ class _FullScreenAlertState extends State<FullScreenAlert> {
 
   Future<void> _startSound() async {
     await _player.setReleaseMode(ReleaseMode.loop);
-    await _player.play(AssetSource('sounds/alarm-buzzer.mp3'));
+    await _player.play(AssetSource('sounds/alarmbuzzer.mp3'));
   }
 
   @override
