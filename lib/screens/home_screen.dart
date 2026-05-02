@@ -4,7 +4,7 @@ import 'timer_screen.dart';
 import 'package:provider/provider.dart';
 import 'stopwatch_screen.dart';
 import 'alarm_screen.dart';
-// import 'world_clock_screen.dart';
+import 'world_clock_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -68,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           TimerScreen(),
           StopwatchScreen(),
           AlarmScreen(),
-          // WorldClockScreen(),
+          WorldClockScreen(),
         ],
       ),
       bottomNavigationBar: _buildNavBar(),

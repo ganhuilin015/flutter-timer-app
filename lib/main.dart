@@ -7,7 +7,7 @@ import 'package:timer/services/notification_service.dart';
 import 'providers/timer_provider.dart';
 import 'providers/stopwatch_provider.dart';
 import 'providers/alarm_provider.dart';
-// import 'providers/world_clock_provider.dart';
+import 'providers/world_clock_provider.dart';
 import 'screens/home_screen.dart';
 import 'theme/app_theme.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -61,7 +61,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => TimerProvider()),
         ChangeNotifierProvider(create: (_) => StopwatchProvider()),
         ChangeNotifierProvider(create: (_) => AlarmProvider()),
-        // ChangeNotifierProvider(create: (_) => WorldClockProvider()),
+        ChangeNotifierProvider(create: (_) => WorldClockProvider()),
       ],
 
       child: Consumer<ThemeProvider>(

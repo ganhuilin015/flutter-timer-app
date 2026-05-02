@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:timer/providers/theme_provider.dart';
 import 'package:timer/utils/show_top_message.dart';
+import 'package:timer/widgets/color_picker.dart';
 import 'package:uuid/uuid.dart';
 import '../models/timer_item.dart';
 import '../providers/timer_provider.dart';
@@ -185,7 +186,7 @@ class _AddTimerSheetState extends State<AddTimerSheet> {
             ),
           ),
           const SizedBox(height: 10),
-          _ColorPicker(
+          ColorPicker(
             selected: _selectedColor,
             onChanged: (c) => setState(() => _selectedColor = c),
           ),
@@ -259,42 +260,3 @@ class _MaxValueFormatter extends TextInputFormatter {
   }
 }
 
-class _ColorPicker extends StatelessWidget {
-  final String selected;
-  final ValueChanged<String> onChanged;
-
-  const _ColorPicker({required this.selected, required this.onChanged});
-
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 10,
-      runSpacing: 10,
-      children: kPaletteColors.map((hex) {
-        final color = hexToColor(hex);
-        final isSelected = hex == selected;
-        return GestureDetector(
-          onTap: () => onChanged(hex),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 150),
-            width: 34,
-            height: 34,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: color,
-              border: isSelected
-                  ? Border.all(color: Colors.white, width: 3)
-                  : null,
-              boxShadow: isSelected
-                  ? [BoxShadow(color: color.withOpacity(0.6), blurRadius: 8)]
-                  : null,
-            ),
-            child: isSelected
-                ? const Icon(Icons.check, color: Colors.white, size: 16)
-                : null,
-          ),
-        );
-      }).toList(),
-    );
-  }
-}

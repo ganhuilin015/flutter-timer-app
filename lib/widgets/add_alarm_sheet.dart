@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:timer/providers/theme_provider.dart';
+import 'package:timer/widgets/color_picker.dart';
 import 'package:uuid/uuid.dart';
 import '../models/alarm_item.dart';
 import '../providers/alarm_provider.dart';
@@ -323,39 +324,9 @@ class _AddAlarmSheetState extends State<AddAlarmSheet> {
               ),
             ),
             const SizedBox(height: 10),
-            Wrap(
-              spacing: 10,
-              runSpacing: 10,
-              children: kPaletteColors.map((hex) {
-                final color = hexToColor(hex);
-                final isSelected = hex == _selectedColor;
-                return GestureDetector(
-                  onTap: () => setState(() => _selectedColor = hex),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 150),
-                    width: 34,
-                    height: 34,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: color,
-                      border: isSelected
-                          ? Border.all(color: Colors.white, width: 3)
-                          : null,
-                      boxShadow: isSelected
-                          ? [
-                              BoxShadow(
-                                color: color.withAlpha(150),
-                                blurRadius: 8,
-                              ),
-                            ]
-                          : null,
-                    ),
-                    child: isSelected
-                        ? const Icon(Icons.check, color: Colors.white, size: 16)
-                        : null,
-                  ),
-                );
-              }).toList(),
+            ColorPicker(
+              selected: _selectedColor,
+              onChanged: (c) => setState(() => _selectedColor = c),
             ),
             const SizedBox(height: 24),
             SizedBox(
