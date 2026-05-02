@@ -1,19 +1,28 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:hive/hive.dart';
 import 'package:timer/services/notification_service.dart';
 import '../models/alarm_item.dart';
 
 class AlarmProvider extends ChangeNotifier {
-  final List<AlarmItem> _alarms = [];
+  static const String boxName = 'alarms';
+
+  final Box<AlarmItem> _box = Hive.box<AlarmItem>(boxName);
+
   Timer? _ticker;
+
   AlarmItem? _firingAlarm;
   final Set<String> _firedKeys = {};
 
-  List<AlarmItem> get alarms => List.unmodifiable(_alarms);
+  List<AlarmItem> get alarms => _box.values.toList();
+
   AlarmItem? get firingAlarm => _firingAlarm;
 
   AlarmProvider() {
-    _ticker = Timer.periodic(const Duration(seconds: 1), (_) => _checkAlarms());
+    _ticker = Timer.periodic(
+      const Duration(seconds: 1),
+      (_) => _checkAlarms(),
+    );
   }
 
   String _alarmKey(AlarmItem alarm) {
@@ -23,11 +32,15 @@ class AlarmProvider extends ChangeNotifier {
 
   void _checkAlarms() {
     cleanupOldFired();
-    
+
     final now = DateTime.now();
-    for (final alarm in _alarms) {
+
+    for (final alarm in _box.values) {
       if (!alarm.isEnabled) continue;
-      if (alarm.hour == now.hour && alarm.minute == now.minute && now.second < 10) {
+
+      if (alarm.hour == now.hour &&
+          alarm.minute == now.minute &&
+          now.second < 10) {
         final key = _alarmKey(alarm);
 
         if (!_firedKeys.contains(key)) {
@@ -59,38 +72,71 @@ class AlarmProvider extends ChangeNotifier {
   }
 
   Future<void> addAlarm(AlarmItem alarm) async {
-    _alarms.add(alarm);
-    _alarms.sort((a, b) => (a.hour * 60 + a.minute).compareTo(b.hour * 60 + b.minute));
+    await _box.put(alarm.id, alarm);
+
+    final list = _box.values.toList()
+      ..sort((a, b) =>
+          (a.hour * 60 + a.minute).compareTo(b.hour * 60 + b.minute));
+
+    await _resaveSorted(list);
+
     if (alarm.isEnabled) await _scheduleNative(alarm);
+
     notifyListeners();
   }
 
   Future<void> removeAlarm(String id) async {
-    final alarm = _alarms.firstWhere((a) => a.id == id, orElse: () => throw Exception('Not found'));
+    final alarm = _box.get(id);
+    if (alarm == null) return;
+
     await _cancelNative(alarm);
-    _alarms.removeWhere((a) => a.id == id);
+    await _box.delete(id);
+
     notifyListeners();
   }
 
   Future<void> toggleEnabled(String id) async {
-    final alarm = _alarms.firstWhere((a) => a.id == id);
+    final alarm = _box.get(id);
+    if (alarm == null) return;
+
     alarm.isEnabled = !alarm.isEnabled;
+    await alarm.save();
+
     if (alarm.isEnabled) {
       await _scheduleNative(alarm);
     } else {
       await _cancelNative(alarm);
     }
+
     notifyListeners();
   }
 
   Future<void> updateAlarm(AlarmItem updated) async {
-    final idx = _alarms.indexWhere((a) => a.id == updated.id);
-    if (idx == -1) return;
-    await _cancelNative(_alarms[idx]);
-    _alarms[idx] = updated;
-    _alarms.sort((a, b) => (a.hour * 60 + a.minute).compareTo(b.hour * 60 + b.minute));
-    if (updated.isEnabled) await _scheduleNative(updated);
+    final existing = _box.get(updated.id);
+    if (existing == null) return;
+
+    await _cancelNative(existing);
+
+    await _box.put(updated.id, updated);
+
+    final list = _box.values.toList()
+      ..sort((a, b) =>
+          (a.hour * 60 + a.minute).compareTo(b.hour * 60 + b.minute));
+
+    await _resaveSorted(list);
+
+    if (updated.isEnabled) {
+      await _scheduleNative(updated);
+    }
+
     notifyListeners();
+  }
+
+  Future<void> _resaveSorted(List<AlarmItem> list) async {
+    await _box.clear();
+    for (final item in list) {
+      await _box.put(item.id, item);
+    }
   }
 
   int _nativeId(String uuid) => uuid.hashCode.abs() % 100000;

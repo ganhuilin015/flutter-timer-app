@@ -2,12 +2,15 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:timer/services/notification_service.dart';
 import '../models/timer_item.dart';
+import 'package:hive/hive.dart';
 
 class TimerProvider extends ChangeNotifier {
-  final List<TimerItem> _timers = [];
-  Timer? _ticker;
+  static const String boxName = 'timers';
 
-  List<TimerItem> get timers => List.unmodifiable(_timers);
+  final Box<TimerItem> _box = Hive.box<TimerItem>(boxName);
+  List<TimerItem> get timers => _box.values.toList();
+
+  Timer? _ticker;
 
   final List<TimerItem> _firingQueue = [];
 
@@ -26,22 +29,26 @@ class TimerProvider extends ChangeNotifier {
 
   void _tick() {
     bool changed = false;
-    for (final timer in _timers) {
+
+    for (final timer in _box.values) {
       if (timer.isRunning) {
         if (timer.remainingSeconds > 0) {
           timer.remainingSeconds--;
+          timer.save(); // 💾 persist change
           changed = true;
         } else {
           timer.status = TimerStatus.finished;
+          timer.save();
 
           if (!_firingQueue.contains(timer)) {
             _firingQueue.add(timer);
           }
-          
+
           changed = true;
         }
       }
     }
+
     if (changed) notifyListeners();
   }
 
@@ -52,59 +59,83 @@ class TimerProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addTimer(TimerItem timer) {
-    _timers.add(timer);
+  Future<void> addTimer(TimerItem timer) async {
+    await _box.put(timer.id, timer);
     notifyListeners();
   }
 
-  void removeTimer(String id) async {
-    final timer = _timers.firstWhere((t) => t.id == id);
-    await _cancelNative(timer);
-
-    _timers.removeWhere((t) => t.id == id);
+  Future<void> removeTimer(String id) async {
+    final timer = _box.get(id);
+    if (timer != null) {
+      await _cancelNative(timer);
+      await _box.delete(id);
+    }
     notifyListeners();
   }
 
-  void startTimer(String id) async {
-    final timer = _timers.firstWhere((t) => t.id == id, orElse: () => throw Exception('Not found'));
+  Future<void> startTimer(String id) async {
+    final timer = _box.get(id);
+    if (timer == null) return;
+
     if (timer.isFinished) {
       timer.remainingSeconds = timer.totalSeconds;
     }
+
     timer.status = TimerStatus.running;
+    await timer.save();
+
     await _scheduleNative(timer);
     notifyListeners();
   }
 
-  void pauseTimer(String id) async {
-    final timer = _timers.firstWhere((t) => t.id == id, orElse: () => throw Exception('Not found'));
+  Future<void> pauseTimer(String id) async {
+    final timer = _box.get(id);
+    if (timer == null) return;
+
     if (timer.isRunning) {
       timer.status = TimerStatus.paused;
+      await timer.save();
       await _cancelNative(timer);
       notifyListeners();
     }
   }
 
-  void resetTimer(String id) async {
-    final timer = _timers.firstWhere((t) => t.id == id, orElse: () => throw Exception('Not found'));
+  Future<void> resetTimer(String id) async {
+    final timer = _box.get(id);
+    if (timer == null) return;
+
     timer.remainingSeconds = timer.totalSeconds;
     timer.status = TimerStatus.idle;
+
+    await timer.save();
     await _cancelNative(timer);
+
     notifyListeners();
   }
 
-  void updateTimer(String id, {String? name, int? totalSeconds, String? color}) {
-    final timer = _timers.firstWhere((t) => t.id == id);
+  Future<void> updateTimer(
+    String id, {
+    String? name,
+    int? totalSeconds,
+    String? color,
+  }) async {
+    final timer = _box.get(id);
+    if (timer == null) return;
+
     if (name != null) timer.name = name;
     if (color != null) timer.color = color;
+
     if (totalSeconds != null) {
       timer.totalSeconds = totalSeconds;
       timer.remainingSeconds = totalSeconds;
       timer.status = TimerStatus.idle;
     }
+
+    await timer.save();
     notifyListeners();
   }
 
-  bool get anyRunning => _timers.any((t) => t.isRunning);
+  bool get anyRunning => _box.values.any((t) => t.isRunning);
 
   int _nativeId(String uuid) => uuid.hashCode.abs() % 100000;
 

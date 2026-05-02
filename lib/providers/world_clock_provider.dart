@@ -1,40 +1,52 @@
 import 'package:flutter/foundation.dart';
+import 'package:hive/hive.dart';
 import 'package:timer/models/world_clock_entry.dart';
 
 class WorldClockProvider extends ChangeNotifier {
-  final List<WorldClock> _clocks = [];
+  static const String boxName = 'worldClocks';
 
-  List<WorldClock> get clocks => List.unmodifiable(_clocks);
+  Box<WorldClock> get _box => Hive.box<WorldClock>(boxName);
 
-  void addClock(WorldClock clock) {
-    _clocks.add(clock);
+  List<WorldClock> get clocks => _box.values.toList();
+
+  Future<void> addClock(WorldClock clock) async {
+    await _box.put(clock.id, clock);
     notifyListeners();
   }
 
-  void removeClock(String id) {
-    _clocks.removeWhere((c) => c.id == id);
+  Future<void> removeClock(String id) async {
+    await _box.delete(id);
     notifyListeners();
   }
 
-  void toggleClock(String id) {
-    final clock = _clocks.firstWhere((c) => c.id == id);
+  Future<void> toggleClock(String id) async {
+    final clock = _box.get(id);
+    if (clock == null) return;
+
     clock.isEnabled = !clock.isEnabled;
+    await clock.save();
     notifyListeners();
   }
 
-  void updateClock(String id, WorldClock clock) {
-    final index = _clocks.indexWhere((c) => c.id == id);
-    if (index == -1) return;
-
-    _clocks[index] = clock;
+  Future<void> updateClock(String id, WorldClock updated) async {
+    await _box.put(id, updated);
     notifyListeners();
   }
 
-  void reorder(int oldIndex, int newIndex) {
+  Future<void> reorder(int oldIndex, int newIndex) async {
+    final list = _box.values.toList();
+
     if (newIndex > oldIndex) newIndex--;
-    final item = _clocks.removeAt(oldIndex);
-    _clocks.insert(newIndex, item);
+
+    final item = list.removeAt(oldIndex);
+    list.insert(newIndex, item);
+
+    await _box.clear();
+
+    for (final clock in list) {
+      await _box.put(clock.id, clock);
+    }
+
     notifyListeners();
   }
-
 }

@@ -1,7 +1,17 @@
+import 'package:hive/hive.dart';
+
+part 'stopwatch_entry.g.dart';
+
+@HiveType(typeId: 10)
 class LapEntry {
+  @HiveField(0)
   final int lapNumber;
-  final int lapMilliseconds;   // time for this lap
-  final int totalMilliseconds; // total elapsed
+
+  @HiveField(1)
+  final int lapMilliseconds;
+
+  @HiveField(2)
+  final int totalMilliseconds;
 
   const LapEntry({
     required this.lapNumber,
@@ -16,20 +26,41 @@ class LapEntry {
     final minutes = ms ~/ 60000;
     final seconds = (ms % 60000) ~/ 1000;
     final centiseconds = (ms % 1000) ~/ 10;
-    return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}.${centiseconds.toString().padLeft(2, '0')}';
+
+    return '${minutes.toString().padLeft(2, '0')}:'
+        '${seconds.toString().padLeft(2, '0')}.'
+        '${centiseconds.toString().padLeft(2, '0')}';
   }
 }
 
-class StopwatchEntry {
+@HiveType(typeId: 11)
+class StopwatchEntry extends HiveObject {
+  @HiveField(0)
   final String id;
+
+  @HiveField(1)
   String name;
+
+  @HiveField(2)
   int elapsedMilliseconds;
+
+  @HiveField(3)
   bool isRunning;
+
+  @HiveField(4)
   bool isEnabled;
+
+  @HiveField(5)
   List<LapEntry> laps;
+
+  @HiveField(6)
   String color;
+
+  @HiveField(7)
   DateTime? startedAt;
-  int accumulatedMs; // ms before last start
+
+  @HiveField(8)
+  int accumulatedMs;
 
   StopwatchEntry({
     required this.id,
@@ -48,6 +79,9 @@ class StopwatchEntry {
     final minutes = ms ~/ 60000;
     final seconds = (ms % 60000) ~/ 1000;
     final centiseconds = (ms % 1000) ~/ 10;
-    return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}.${centiseconds.toString().padLeft(2, '0')}';
+
+    return '${minutes.toString().padLeft(2, '0')}:'
+        '${seconds.toString().padLeft(2, '0')}.'
+        '${centiseconds.toString().padLeft(2, '0')}';
   }
 }

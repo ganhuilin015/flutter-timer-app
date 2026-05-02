@@ -1,11 +1,26 @@
+import 'package:hive/hive.dart';
 import 'package:timezone/timezone.dart' as tz;
 
-class WorldClock {
+part 'world_clock_entry.g.dart';
+
+@HiveType(typeId: 0)
+class WorldClock extends HiveObject {
+  @HiveField(0)
   final String id;
+
+  @HiveField(1)
   String cityName;
+
+  @HiveField(2)
   String countryName;
-  String timeZoneName; // IANA like "Europe/London"
+
+  @HiveField(3)
+  String timeZoneName;
+
+  @HiveField(4)
   bool isEnabled;
+
+  @HiveField(5)
   String color;
 
   WorldClock({
@@ -19,9 +34,7 @@ class WorldClock {
 
   tz.Location get location => tz.getLocation(timeZoneName);
 
-  DateTime get currentTime {
-    return tz.TZDateTime.now(location);
-  }
+  DateTime get currentTime => tz.TZDateTime.now(location);
 
   String get formattedTime {
     final t = currentTime;
@@ -33,17 +46,10 @@ class WorldClock {
   }
 
   String get formattedDate {
-    final t = currentTime;
-    const months = [
-      'Jan','Feb','Mar','Apr','May','Jun',
-      'Jul','Aug','Sep','Oct','Nov','Dec'
-    ];
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 
+    final t = currentTime;
     return '${days[t.weekday - 1]}, ${months[t.month - 1]} ${t.day}';
-  }
-
-  DateTime get utcTime {
-    return currentTime.toUtc();
   }
 }

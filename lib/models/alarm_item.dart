@@ -1,11 +1,31 @@
-class AlarmItem {
+import 'package:hive/hive.dart';
+
+part 'alarm_item.g.dart';
+
+@HiveType(typeId: 3)
+class AlarmItem extends HiveObject {
+  @HiveField(0)
   final String id;
+
+  @HiveField(1)
   String name;
+
+  @HiveField(2)
   int hour;
+
+  @HiveField(3)
   int minute;
-  List<bool> repeatDays; // Mon=0 ... Sun=6
+
+  @HiveField(4)
+  List<bool> repeatDays;
+
+  @HiveField(5)
   bool isEnabled;
+
+  @HiveField(6)
   String sound;
+
+  @HiveField(7)
   String color;
 
   AlarmItem({
@@ -27,45 +47,22 @@ class AlarmItem {
     return '$h:$m';
   }
 
-  /// Returns the next trigger DateTime from now
   DateTime get nextTrigger {
     final now = DateTime.now();
     var candidate = DateTime(now.year, now.month, now.day, hour, minute);
+
     if (candidate.isBefore(now) || candidate.isAtSameMomentAs(now)) {
       candidate = candidate.add(const Duration(days: 1));
     }
 
-    if (!repeats) {
-      return candidate;
-    }
+    if (!repeats) return candidate;
 
     for (int i = 0; i < 7; i++) {
       final dayIndex = (candidate.weekday - 1) % 7;
       if (repeatDays[dayIndex]) return candidate;
       candidate = candidate.add(const Duration(days: 1));
     }
-    return candidate;
-  }
 
-  AlarmItem copyWith({
-    String? id,
-    String? name,
-    int? hour,
-    int? minute,
-    List<bool>? repeatDays,
-    bool? isEnabled,
-    String? sound,
-    String? color,
-  }) {
-    return AlarmItem(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      hour: hour ?? this.hour,
-      minute: minute ?? this.minute,
-      repeatDays: repeatDays ?? List.from(this.repeatDays),
-      isEnabled: isEnabled ?? this.isEnabled,
-      sound: sound ?? this.sound,
-      color: color ?? this.color,
-    );
+    return candidate;
   }
 }

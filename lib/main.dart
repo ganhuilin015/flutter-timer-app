@@ -2,6 +2,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:timer/models/alarm_item.dart';
+import 'package:timer/models/stopwatch_entry.dart';
+import 'package:timer/models/timer_item.dart';
+import 'package:timer/models/world_clock_entry.dart';
 import 'package:timer/providers/theme_provider.dart';
 import 'package:timer/services/notification_service.dart';
 import 'providers/timer_provider.dart';
@@ -13,6 +17,7 @@ import 'theme/app_theme.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:hive_flutter/hive_flutter.dart';
 
 Future<void> _requestAndroidPermissions() async {
   if (!Platform.isAndroid) return;
@@ -44,6 +49,22 @@ void main() async {
 
   await NotificationService.init();
   await _requestAndroidPermissions();
+
+  await Hive.initFlutter();
+
+  Hive.registerAdapter(TimerStatusAdapter());
+  Hive.registerAdapter(TimerItemAdapter());
+  await Hive.openBox<TimerItem>('timers');
+
+  Hive.registerAdapter(StopwatchEntryAdapter());
+  Hive.registerAdapter(LapEntryAdapter());
+  await Hive.openBox<StopwatchEntry>('stopwatches');
+
+  Hive.registerAdapter(WorldClockAdapter());
+  await Hive.openBox<WorldClock>('worldClocks');
+
+  Hive.registerAdapter(AlarmItemAdapter());
+  await Hive.openBox<AlarmItem>('alarms');
 
   runApp(const MyApp());
 }

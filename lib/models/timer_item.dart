@@ -1,11 +1,40 @@
-enum TimerStatus { idle, running, paused, finished }
+import 'package:hive/hive.dart';
 
-class TimerItem {
+part 'timer_item.g.dart';
+
+@HiveType(typeId: 1)
+enum TimerStatus {
+  @HiveField(0)
+  idle,
+
+  @HiveField(1)
+  running,
+
+  @HiveField(2)
+  paused,
+
+  @HiveField(3)
+  finished,
+}
+
+@HiveType(typeId: 2)
+class TimerItem extends HiveObject {
+  @HiveField(0)
   final String id;
+
+  @HiveField(1)
   String name;
+
+  @HiveField(2)
   int totalSeconds;
+
+  @HiveField(3)
   int remainingSeconds;
+
+  @HiveField(4)
   TimerStatus status;
+
+  @HiveField(5)
   String color;
 
   TimerItem({
@@ -31,9 +60,11 @@ class TimerItem {
     final h = remainingSeconds ~/ 3600;
     final m = (remainingSeconds % 3600) ~/ 60;
     final s = remainingSeconds % 60;
+
     if (h > 0) {
       return '${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
     }
+
     return '${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
   }
 
@@ -41,9 +72,8 @@ class TimerItem {
     final h = totalSeconds ~/ 3600;
     final m = (totalSeconds % 3600) ~/ 60;
     final s = totalSeconds % 60;
-    if (h > 0) {
-      return '${h}h ${m}m ${s}s';
-    }
+
+    if (h > 0) return '${h}h ${m}m ${s}s';
     if (m > 0) return '${m}m ${s}s';
     return '${s}s';
   }
@@ -54,7 +84,6 @@ class TimerItem {
     int? totalSeconds,
     int? remainingSeconds,
     TimerStatus? status,
-    bool? isEnabled,
     String? color,
   }) {
     return TimerItem(
