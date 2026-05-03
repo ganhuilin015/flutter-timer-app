@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:timer/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:timer/screens/settings_screen.dart';
 
 class ScreenHeader extends StatelessWidget {
   final String title;
@@ -48,15 +49,14 @@ class ScreenHeader extends StatelessWidget {
           const Spacer(),
           const SizedBox(width: 20),
           IconButton(
-            icon: Icon(
-              context.read<ThemeProvider>().isDark(context)
-                  ? Icons.dark_mode
-                  : Icons.light_mode,
-            ),
+            icon: const Icon(Icons.menu),
             onPressed: () {
-              final provider = context.read<ThemeProvider>();
-              final isDark = provider.isDark(context);
-              provider.toggleTheme(!isDark);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const SettingsScreen(),
+                ),
+              );
             },
           ),
         ],

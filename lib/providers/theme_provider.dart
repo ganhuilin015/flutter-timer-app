@@ -1,10 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import '../theme/app_theme.dart';
 
 class ThemeProvider extends ChangeNotifier {
+  static const String _boxName = 'settings';
+  static const String _key = 'themeMode';
+
+  Box get _box => Hive.box(_boxName);
+
   ThemeMode _themeMode = ThemeMode.system;
 
   ThemeMode get themeMode => _themeMode;
+
+  ThemeProvider() {
+    _loadFromHive();
+  }
+
+  void _loadFromHive() {
+    final stored = _box.get(_key, defaultValue: 'system');
+
+    switch (stored) {
+      case 'dark':
+        _themeMode = ThemeMode.dark;
+        break;
+      case 'light':
+        _themeMode = ThemeMode.light;
+        break;
+      default:
+        _themeMode = ThemeMode.system;
+    }
+  }
 
   bool isDark(BuildContext context) {
     if (_themeMode == ThemeMode.system) {
@@ -13,8 +38,8 @@ class ThemeProvider extends ChangeNotifier {
     return _themeMode == ThemeMode.dark;
   }
 
-ColorScheme scheme(BuildContext context) =>
-    isDark(context) ? AppTheme.dark.colorScheme : AppTheme.light.colorScheme;
+  ColorScheme scheme(BuildContext context) =>
+      isDark(context) ? AppTheme.dark.colorScheme : AppTheme.light.colorScheme;
 
   Color primary(BuildContext context) => scheme(context).primary;
   Color onPrimary(BuildContext context) => scheme(context).onPrimary;
@@ -31,6 +56,25 @@ ColorScheme scheme(BuildContext context) =>
 
   void toggleTheme(bool isDark) {
     _themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
+
+    _saveToHive();
     notifyListeners();
+  }
+
+  void _saveToHive() {
+    String value;
+
+    switch (_themeMode) {
+      case ThemeMode.dark:
+        value = 'dark';
+        break;
+      case ThemeMode.light:
+        value = 'light';
+        break;
+      default:
+        value = 'system';
+    }
+
+    _box.put(_key, value);
   }
 }

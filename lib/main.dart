@@ -66,6 +66,8 @@ void main() async {
   Hive.registerAdapter(AlarmItemAdapter());
   await Hive.openBox<AlarmItem>('alarms');
 
+  await Hive.openBox('settings');
+
   runApp(const MyApp());
 }
 
