@@ -136,14 +136,14 @@ class _FullScreenAlertState extends State<FullScreenAlert> {
         });
       },
       child: SizedBox(
-        height: 120,
+        height: 150,
         width: 80,
         child: Stack(
           alignment: Alignment.bottomCenter,
           children: [
             /// track
             Container(
-              height: 120,
+              height: 150,
               width: 60,
               decoration: BoxDecoration(
                 color: themeColor.onPrimary(context).withAlpha(40),
@@ -159,6 +159,14 @@ class _FullScreenAlertState extends State<FullScreenAlert> {
                 decoration: BoxDecoration(
                   color: themeColor.onPrimary(context),
                   shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withAlpha(60),
+                      blurRadius: 12,
+                      spreadRadius: 1,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
                 ),
                 child: Icon(
                   Icons.close,

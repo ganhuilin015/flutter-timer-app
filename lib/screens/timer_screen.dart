@@ -4,7 +4,7 @@ import 'package:timer/models/timer_item.dart';
 import 'package:timer/providers/sound_provider.dart';
 import 'package:timer/providers/theme_provider.dart';
 import 'package:timer/widgets/empty_state.dart';
-import 'package:timer/widgets/full_screen_alert.dart';
+import 'package:timer/screens/full_screen_alert.dart';
 import '../providers/timer_provider.dart';
 import '../widgets/timer_card.dart';
 import '../widgets/add_timer_sheet.dart';
