@@ -6,6 +6,7 @@ import 'package:timer/models/alarm_item.dart';
 import 'package:timer/models/stopwatch_entry.dart';
 import 'package:timer/models/timer_item.dart';
 import 'package:timer/models/world_clock_entry.dart';
+import 'package:timer/providers/sound_provider.dart';
 import 'package:timer/providers/theme_provider.dart';
 import 'package:timer/services/notification_service.dart';
 import 'providers/timer_provider.dart';
@@ -85,6 +86,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => StopwatchProvider()),
         ChangeNotifierProvider(create: (_) => AlarmProvider()),
         ChangeNotifierProvider(create: (_) => WorldClockProvider()),
+        ChangeNotifierProvider(create: (_) => SoundProvider()),
       ],
 
       child: Consumer<ThemeProvider>(

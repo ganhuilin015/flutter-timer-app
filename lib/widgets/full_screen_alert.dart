@@ -17,11 +17,13 @@ class AlertData {
 class FullScreenAlert extends StatefulWidget {
   final AlertData data;
   final VoidCallback onDismiss;
+  final String soundFile;
 
   const FullScreenAlert({
     super.key,
     required this.data,
     required this.onDismiss,
+    required this.soundFile,
   });
 
   @override
@@ -31,7 +33,7 @@ class FullScreenAlert extends StatefulWidget {
 class _FullScreenAlertState extends State<FullScreenAlert> {
   double _dragY = 0;
   late AudioPlayer _player;
-
+  
   @override
   void initState() {
     super.initState();
@@ -43,7 +45,7 @@ class _FullScreenAlertState extends State<FullScreenAlert> {
 
   Future<void> _startSound() async {
     await _player.setReleaseMode(ReleaseMode.loop);
-    await _player.play(AssetSource('sounds/alarmbuzzer.mp3'));
+    await _player.play(AssetSource('sounds/${widget.soundFile}'));
   }
 
   @override

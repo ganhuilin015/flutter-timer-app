@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:timer/models/alarm_item.dart';
+import 'package:timer/providers/sound_provider.dart';
 import 'package:timer/providers/theme_provider.dart';
 import 'package:timer/widgets/empty_state.dart';
 import 'package:timer/widgets/full_screen_alert.dart';
@@ -38,11 +39,14 @@ class _AlarmScreenState extends State<AlarmScreen> {
       icon: Icons.alarm,
     );
 
+    final sound = context.read<SoundProvider>().alarmSound;
+
     showGeneralDialog(
       context: context,
       barrierDismissible: false,
       pageBuilder: (_, __, ___) => FullScreenAlert(
         data: data,
+        soundFile: sound.file,
         onDismiss: () {
           provider.dismissFiring();
           Navigator.pop(context);

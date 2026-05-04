@@ -53,6 +53,12 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/sounds/alarmbuzzer.mp3
+    - assets/sounds/alert.mp3
+    - assets/sounds/beep.mp3
+    - assets/sounds/classic.mp3
+    - assets/sounds/retro.mp3
+    - assets/sounds/rooster.mp3
+
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
