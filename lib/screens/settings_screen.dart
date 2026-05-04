@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:timer/providers/sound_provider.dart';
 import 'package:timer/providers/theme_provider.dart';
 import 'package:timer/screens/sound_screen.dart';
+import 'package:timer/services/permission_service.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -12,6 +13,7 @@ class SettingsScreen extends StatelessWidget {
     final theme = context.watch<ThemeProvider>();
     final isDark = theme.isDark(context);
     final soundProvider = context.watch<SoundProvider>();
+    final permissions = PermissionService();
 
     return Scaffold(
       appBar: AppBar(
@@ -114,43 +116,54 @@ class SettingsScreen extends StatelessWidget {
           _sectionTitle('Permissions'),
 
           Card(
+            elevation: 0,
+            color: theme.secondary(context),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
-            elevation: 0,
-            color: theme.secondary(context),
-            child: Column(
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.notifications),
-                  title: const Text('Notifications'),
-                  subtitle: const Text('Manage notification permissions'),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                    // TODO: open app settings
-                  },
-                ),
-              ],
-            ),
-          ),
+            child: FutureBuilder(
+              future: Future.wait([
+                PermissionService.isNotificationGranted(),
+                PermissionService.isLocationGranted(),
+              ]),
+              builder: (context, snapshot) {
+                final notifGranted = snapshot.data?[0] ?? false;
+                final locationGranted = snapshot.data?[1] ?? false;
 
-          Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            elevation: 0,
-            color: theme.secondary(context),
-            child: Column(
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.battery_saver),
-                  title: const Text('Battery Optimization'),
-                  subtitle: const Text('Allow background alarms'),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                  },
-                ),
-              ],
+                return Column(
+                  children: [
+                    ListTile(
+                      leading: Icon(
+                        notifGranted ? Icons.notifications_active : Icons.notifications_off,
+                        color: theme.onSecondary(context),
+                      ),
+                      title: const Text('Notifications'),
+                      subtitle: Text(
+                        notifGranted ? 'Enabled' : 'Disabled',
+                      ),
+                    ),
+
+                    ListTile(
+                      leading: Icon(
+                        Icons.location_on,
+                        color: theme.onSecondary(context),
+                      ),
+                      title: const Text('Location'),
+                      subtitle: Text(
+                        locationGranted ? 'Enabled' : 'Disabled',
+                      ),
+                    ),
+
+                    ListTile(
+                      leading: const Icon(Icons.settings),
+                      title: const Text('Open App Settings'),
+                      subtitle: const Text('Manage permissions'),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () => PermissionService.openSettings(),
+                    ),
+                  ],
+                );
+              },
             ),
           ),
 
