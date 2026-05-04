@@ -4,6 +4,7 @@ import 'package:timer/providers/sound_provider.dart';
 import 'package:timer/providers/theme_provider.dart';
 import 'package:timer/screens/sound_screen.dart';
 import 'package:timer/services/permission_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -13,7 +14,16 @@ class SettingsScreen extends StatelessWidget {
     final theme = context.watch<ThemeProvider>();
     final isDark = theme.isDark(context);
     final soundProvider = context.watch<SoundProvider>();
-    final permissions = PermissionService();
+
+    Future<void> openPrivacy() async {
+      final url = Uri.parse('https://ganhuilin015.github.io/timer-legal/');
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    }
+
+    Future<void> openTOS() async {
+      final url = Uri.parse('https://ganhuilin015.github.io/timer-legal/tos.html');
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -182,8 +192,7 @@ class SettingsScreen extends StatelessWidget {
                 ListTile(
                   title: const Text('Terms of Service'),
                   trailing: const Icon(Icons.open_in_new),
-                  onTap: () {
-                  },
+                  onTap: openTOS,
                 ),
               ],
             ),
@@ -200,8 +209,7 @@ class SettingsScreen extends StatelessWidget {
                 ListTile(
                   title: const Text('Privacy Policy'),
                   trailing: const Icon(Icons.open_in_new),
-                  onTap: () {
-                  },
+                  onTap: openPrivacy,
                 ),
               ],
             ),
