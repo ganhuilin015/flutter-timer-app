@@ -5,28 +5,12 @@ class NotificationService {
   static final FlutterLocalNotificationsPlugin _notifications =
       FlutterLocalNotificationsPlugin();
 
-  static const AndroidNotificationChannel alarmChannel =
-      AndroidNotificationChannel(
-    'alarm_channel',
-    'Alarms',
-    description: 'Alarm notifications',
-    importance: Importance.max,
-    playSound: true,
-    sound: RawResourceAndroidNotificationSound('alarmbuzzer'),
-  );
-
   static Future<void> init() async {
     await _notifications.initialize(
       const InitializationSettings(
         android: AndroidInitializationSettings('@mipmap/ic_launcher'),
       ),
     );
-
-    final androidPlugin = _notifications
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
-
-    await androidPlugin?.createNotificationChannel(alarmChannel);
   }
 
   static Future<void> schedule({
@@ -48,7 +32,7 @@ class NotificationService {
           importance: Importance.max,
           priority: Priority.high,
           playSound: true,
-          sound: RawResourceAndroidNotificationSound('alarmbuzzer'),
+          sound: RawResourceAndroidNotificationSound('notification'),
           fullScreenIntent: true,
           category: AndroidNotificationCategory.alarm,
           visibility: NotificationVisibility.public,

@@ -145,7 +145,7 @@ class AlarmProvider extends ChangeNotifier {
     await NotificationService.schedule(
       id: _nativeId(alarm.id),
       title: alarm.name.isEmpty ? 'Alarm' : alarm.name,
-      body: 'Alarm is ringing – ${alarm.formattedTime}',
+      body: 'Tap to stop alarm – ${alarm.formattedTime}',
       trigger: alarm.nextTrigger,
     );
   }

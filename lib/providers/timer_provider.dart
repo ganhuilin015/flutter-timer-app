@@ -147,7 +147,7 @@ class TimerProvider extends ChangeNotifier {
     await NotificationService.schedule(
       id: _nativeId(timer.id),
       title: timer.name.isEmpty ? 'Timer' : timer.name,
-      body: 'Timer is ringing – ${timer.formattedTime}',
+      body: 'Tap to stop timer – ${timer.formattedTime}',
       trigger: trigger,
     );
   }
