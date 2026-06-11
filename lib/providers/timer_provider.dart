@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+import 'package:timer/providers/sound_provider.dart';
 import 'package:timer/services/notification_service.dart';
 import '../models/timer_item.dart';
 import 'package:hive/hive.dart';
@@ -34,7 +36,7 @@ class TimerProvider extends ChangeNotifier {
       if (timer.isRunning) {
         if (timer.remainingSeconds > 0) {
           timer.remainingSeconds--;
-          timer.save(); // 💾 persist change
+          timer.save();
           changed = true;
         } else {
           timer.status = TimerStatus.finished;
@@ -67,7 +69,7 @@ class TimerProvider extends ChangeNotifier {
   Future<void> removeTimer(String id) async {
     final timer = _box.get(id);
     if (timer != null) {
-      await _cancelNative(timer);
+      await cancelNative(timer);
       await _box.delete(id);
     }
     notifyListeners();
@@ -95,7 +97,7 @@ class TimerProvider extends ChangeNotifier {
     if (timer.isRunning) {
       timer.status = TimerStatus.paused;
       await timer.save();
-      await _cancelNative(timer);
+      await cancelNative(timer);
       notifyListeners();
     }
   }
@@ -108,7 +110,7 @@ class TimerProvider extends ChangeNotifier {
     timer.status = TimerStatus.idle;
 
     await timer.save();
-    await _cancelNative(timer);
+    await cancelNative(timer);
 
     notifyListeners();
   }
@@ -144,16 +146,33 @@ class TimerProvider extends ChangeNotifier {
       Duration(seconds: timer.remainingSeconds),
     );
 
+    final sound = SoundProvider().timerSound.file;
+
     await NotificationService.schedule(
       id: _nativeId(timer.id),
       title: timer.name.isEmpty ? 'Timer' : timer.name,
       body: 'Tap to stop timer – ${timer.formattedTime}',
       trigger: trigger,
     );
+
+    const platform = MethodChannel('com.example.timer/alarm');
+
+    await platform.invokeMethod('scheduleAlarm', {
+      'id': _nativeId(timer.id),
+      'trigger': trigger.millisecondsSinceEpoch,
+      'title': timer.name.isEmpty ? 'Timer' : timer.name,
+      'body': 'Tap to stop timer',
+      'sound': sound,
+    });
   }
 
-  Future<void> _cancelNative(TimerItem timer) async {
+  Future<void> cancelNative(TimerItem timer) async {
     await NotificationService.cancel(_nativeId(timer.id));
+
+    const platform = MethodChannel('com.example.timer/alarm');
+    platform.invokeMethod('stopAlarm', {
+      'id': _nativeId(timer.id)
+    });
   }
 
   @override

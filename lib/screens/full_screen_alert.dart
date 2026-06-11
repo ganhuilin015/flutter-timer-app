@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:timer/providers/theme_provider.dart';
-import 'package:audioplayers/audioplayers.dart';
 class AlertData {
   final String title;
   final String subtitle;
@@ -17,13 +16,11 @@ class AlertData {
 class FullScreenAlert extends StatefulWidget {
   final AlertData data;
   final VoidCallback onDismiss;
-  final String soundFile;
 
   const FullScreenAlert({
     super.key,
     required this.data,
     required this.onDismiss,
-    required this.soundFile,
   });
 
   @override
@@ -32,27 +29,6 @@ class FullScreenAlert extends StatefulWidget {
 
 class _FullScreenAlertState extends State<FullScreenAlert> {
   double _dragY = 0;
-  late AudioPlayer _player;
-  
-  @override
-  void initState() {
-    super.initState();
-
-    _player = AudioPlayer();
-
-    _startSound();
-  }
-
-  Future<void> _startSound() async {
-    await _player.setReleaseMode(ReleaseMode.loop);
-    await _player.play(AssetSource('sounds/${widget.soundFile}'));
-  }
-
-  @override
-  void dispose() {
-    _player.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {

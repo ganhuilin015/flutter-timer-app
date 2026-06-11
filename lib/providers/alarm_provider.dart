@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
+import 'package:timer/providers/sound_provider.dart';
 import 'package:timer/services/notification_service.dart';
 import '../models/alarm_item.dart';
 
@@ -19,10 +21,7 @@ class AlarmProvider extends ChangeNotifier {
   AlarmItem? get firingAlarm => _firingAlarm;
 
   AlarmProvider() {
-    _ticker = Timer.periodic(
-      const Duration(seconds: 1),
-      (_) => _checkAlarms(),
-    );
+    _ticker = Timer.periodic(const Duration(seconds: 1), (_) => _checkAlarms());
   }
 
   String _alarmKey(AlarmItem alarm) {
@@ -75,8 +74,9 @@ class AlarmProvider extends ChangeNotifier {
     await _box.put(alarm.id, alarm);
 
     final list = _box.values.toList()
-      ..sort((a, b) =>
-          (a.hour * 60 + a.minute).compareTo(b.hour * 60 + b.minute));
+      ..sort(
+        (a, b) => (a.hour * 60 + a.minute).compareTo(b.hour * 60 + b.minute),
+      );
 
     await _resaveSorted(list);
 
@@ -89,7 +89,7 @@ class AlarmProvider extends ChangeNotifier {
     final alarm = _box.get(id);
     if (alarm == null) return;
 
-    await _cancelNative(alarm);
+    await cancelNative(alarm);
     await _box.delete(id);
 
     notifyListeners();
@@ -105,7 +105,7 @@ class AlarmProvider extends ChangeNotifier {
     if (alarm.isEnabled) {
       await _scheduleNative(alarm);
     } else {
-      await _cancelNative(alarm);
+      await cancelNative(alarm);
     }
 
     notifyListeners();
@@ -115,13 +115,14 @@ class AlarmProvider extends ChangeNotifier {
     final existing = _box.get(updated.id);
     if (existing == null) return;
 
-    await _cancelNative(existing);
+    await cancelNative(existing);
 
     await _box.put(updated.id, updated);
 
     final list = _box.values.toList()
-      ..sort((a, b) =>
-          (a.hour * 60 + a.minute).compareTo(b.hour * 60 + b.minute));
+      ..sort(
+        (a, b) => (a.hour * 60 + a.minute).compareTo(b.hour * 60 + b.minute),
+      );
 
     await _resaveSorted(list);
 
@@ -148,10 +149,25 @@ class AlarmProvider extends ChangeNotifier {
       body: 'Tap to stop alarm – ${alarm.formattedTime}',
       trigger: alarm.nextTrigger,
     );
+
+    final sound = SoundProvider().alarmSound.file;
+
+    const platform = MethodChannel('com.example.timer/alarm');
+
+    await platform.invokeMethod('scheduleAlarm', {
+      'id': _nativeId(alarm.id),
+      'trigger': alarm.nextTrigger.millisecondsSinceEpoch,
+      'title': alarm.name.isEmpty ? 'Alarm' : alarm.name,
+      'body': 'Tap to stop alarm',
+      'sound': sound,
+    });
   }
 
-  Future<void> _cancelNative(AlarmItem alarm) async {
+  Future<void> cancelNative(AlarmItem alarm) async {
     await NotificationService.cancel(_nativeId(alarm.id));
+
+    const platform = MethodChannel('com.example.timer/alarm');
+    platform.invokeMethod('stopAlarm', {'id': _nativeId(alarm.id)});
   }
 
   @override

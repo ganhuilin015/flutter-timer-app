@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:timer/models/timer_item.dart';
-import 'package:timer/providers/sound_provider.dart';
 import 'package:timer/providers/theme_provider.dart';
 import 'package:timer/widgets/empty_state.dart';
 import 'package:timer/screens/full_screen_alert.dart';
@@ -30,17 +29,17 @@ class _TimerScreenState extends State<TimerScreen> {
       icon: Icons.timer,
     );
 
-    final sound = context.read<SoundProvider>().timerSound;
-
     showGeneralDialog(
       context: context,
       barrierDismissible: false,
       pageBuilder: (_, __, ___) => FullScreenAlert(
         data: data,
-        soundFile: sound.file,
         onDismiss: () {
           provider.dismissFiring();
-          Navigator.pop(context);
+          provider.cancelNative(timer);
+          if (context.mounted) {
+            Navigator.pop(context);
+          }
           _isShowingTimer = false;
         },
       ),
@@ -53,7 +52,6 @@ class _TimerScreenState extends State<TimerScreen> {
 
     return Consumer<TimerProvider>(
       builder: (context, provider, _) {
-
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (!mounted) return;
 

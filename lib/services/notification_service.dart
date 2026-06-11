@@ -49,4 +49,5 @@ class NotificationService {
   static Future<void> cancel(int id) async {
     await _notifications.cancel(id);
   }
+
 }
