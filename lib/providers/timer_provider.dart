@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:timer/providers/sound_provider.dart';
+import 'package:timer/services/global_alert_service.dart';
 import 'package:timer/services/notification_service.dart';
 import '../models/timer_item.dart';
 import 'package:hive/hive.dart';
@@ -58,6 +59,8 @@ class TimerProvider extends ChangeNotifier {
 
           if (!_firingQueue.contains(timer)) {
             _firingQueue.add(timer);
+            GlobalAlertService.instance.showAlarm(timer);
+            notifyListeners();
           }
 
           changed = true;

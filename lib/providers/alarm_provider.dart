@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:timer/providers/sound_provider.dart';
+import 'package:timer/services/global_alert_service.dart';
 import 'package:timer/services/notification_service.dart';
 import '../models/alarm_item.dart';
 
@@ -59,6 +60,7 @@ class AlarmProvider extends ChangeNotifier {
         if (!_firedKeys.contains(key)) {
           _firedKeys.add(key);
           _firingAlarm = alarm;
+          GlobalAlertService.instance.showAlarm(alarm);
           notifyListeners();
         }
       }

@@ -9,6 +9,8 @@ import 'package:timer/models/world_clock_entry.dart';
 import 'package:timer/providers/sound_provider.dart';
 import 'package:timer/providers/theme_provider.dart';
 import 'package:timer/services/notification_service.dart';
+import 'package:timer/utils/global_key.dart';
+import 'package:timer/widgets/global_alert_listener.dart';
 import 'providers/timer_provider.dart';
 import 'providers/stopwatch_provider.dart';
 import 'providers/alarm_provider.dart';
@@ -72,7 +74,7 @@ void main() async {
   runApp(const MyApp());
 }
 
-final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+// final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -99,14 +101,18 @@ class MyApp extends StatelessWidget {
 
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
-          return MaterialApp(
-            title: 'Chrono',
-            debugShowCheckedModeBanner: false,
-            navigatorKey: navigatorKey,
-            theme: AppTheme.light,
-            darkTheme: AppTheme.dark,
-            themeMode: themeProvider.themeMode,
-            home: const HomeScreen(),
+           return GlobalAlertListener( 
+            timerProvider: Provider.of<TimerProvider>(context, listen: false),
+            alarmProvider: Provider.of<AlarmProvider>(context, listen: false),
+            child: MaterialApp(
+              title: 'Chrono',
+              debugShowCheckedModeBanner: false,
+              navigatorKey: navigatorKey,
+              theme: AppTheme.light,
+              darkTheme: AppTheme.dark,
+              themeMode: themeProvider.themeMode,
+              home: const HomeScreen(),
+            ),
           );
         },
       ),

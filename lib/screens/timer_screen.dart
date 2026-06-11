@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:timer/models/timer_item.dart';
 import 'package:timer/providers/theme_provider.dart';
 import 'package:timer/widgets/empty_state.dart';
-import 'package:timer/screens/full_screen_alert.dart';
 import '../providers/timer_provider.dart';
 import '../widgets/timer_card.dart';
 import '../widgets/add_timer_sheet.dart';
@@ -17,50 +15,13 @@ class TimerScreen extends StatefulWidget {
 }
 
 class _TimerScreenState extends State<TimerScreen> {
-  bool _isShowingTimer = false;
-
-  void _showFiringTimer(TimerItem timer, TimerProvider provider) {
-    if (_isShowingTimer) return;
-    _isShowingTimer = true;
-
-    final data = AlertData(
-      title: timer.name.isNotEmpty ? timer.name : 'Timer',
-      subtitle: timer.formattedTime,
-      icon: Icons.timer,
-    );
-
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: false,
-      pageBuilder: (_, __, ___) => FullScreenAlert(
-        data: data,
-        onDismiss: () {
-          provider.dismissFiring();
-          provider.cancelNative(timer);
-          if (context.mounted) {
-            Navigator.pop(context);
-          }
-          _isShowingTimer = false;
-        },
-      ),
-    ).then((_) => _isShowingTimer = false);
-  }
-
   @override
   Widget build(BuildContext context) {
     final color = context.watch<ThemeProvider>();
 
+
     return Consumer<TimerProvider>(
       builder: (context, provider, _) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (!mounted) return;
-
-          final timer = provider.firingTimer;
-          if (timer != null && !_isShowingTimer) {
-            _showFiringTimer(timer, provider);
-          }
-        });
-
         return Scaffold(
           backgroundColor: color.background(context),
           body: SafeArea(
