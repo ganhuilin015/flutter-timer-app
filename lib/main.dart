@@ -82,11 +82,19 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        ChangeNotifierProvider(create: (_) => TimerProvider()),
-        ChangeNotifierProvider(create: (_) => StopwatchProvider()),
-        ChangeNotifierProvider(create: (_) => AlarmProvider()),
-        ChangeNotifierProvider(create: (_) => WorldClockProvider()),
         ChangeNotifierProvider(create: (_) => SoundProvider()),
+        ChangeNotifierProvider(
+          create: (context) => TimerProvider(
+            Provider.of<SoundProvider>(context, listen: false),
+          ),
+        ),
+        ChangeNotifierProvider(create: (_) => StopwatchProvider()),
+        ChangeNotifierProvider(
+          create: (context) => AlarmProvider(
+            Provider.of<SoundProvider>(context, listen: false),
+          ),
+        ),
+        ChangeNotifierProvider(create: (_) => WorldClockProvider()),
       ],
 
       child: Consumer<ThemeProvider>(

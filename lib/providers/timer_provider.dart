@@ -8,6 +8,7 @@ import 'package:hive/hive.dart';
 
 class TimerProvider extends ChangeNotifier {
   static const String boxName = 'timers';
+  final SoundProvider soundProvider;
 
   final Box<TimerItem> _box = Hive.box<TimerItem>(boxName);
   List<TimerItem> get timers => _box.values.toList();
@@ -19,8 +20,21 @@ class TimerProvider extends ChangeNotifier {
   TimerItem? get firingTimer =>
       _firingQueue.isNotEmpty ? _firingQueue.first : null;
 
-  TimerProvider() {
+  TimerProvider(this.soundProvider) {
+    soundProvider.addListener(_onSoundChanged);
     _startTicker();
+  }
+
+  void attachSoundProvider(SoundProvider soundProvider) {
+    soundProvider.addListenerCallback(_onSoundChanged);
+  }
+
+  Future<void> _onSoundChanged() async {
+    for (final timer in _box.values) {
+      if (!timer.isRunning) continue;
+      await cancelNative(timer);
+      await _scheduleNative(timer);
+    }
   }
 
   void _startTicker() {
@@ -146,7 +160,7 @@ class TimerProvider extends ChangeNotifier {
       Duration(seconds: timer.remainingSeconds),
     );
 
-    final sound = SoundProvider().timerSound.file;
+    final sound = soundProvider.timerSound.file;
 
     await NotificationService.schedule(
       id: _nativeId(timer.id),
@@ -170,9 +184,7 @@ class TimerProvider extends ChangeNotifier {
     await NotificationService.cancel(_nativeId(timer.id));
 
     const platform = MethodChannel('com.example.timer/alarm');
-    platform.invokeMethod('stopAlarm', {
-      'id': _nativeId(timer.id)
-    });
+    platform.invokeMethod('stopAlarm', {'id': _nativeId(timer.id)});
   }
 
   @override

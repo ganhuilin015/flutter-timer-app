@@ -8,6 +8,7 @@ import '../models/alarm_item.dart';
 
 class AlarmProvider extends ChangeNotifier {
   static const String boxName = 'alarms';
+  final SoundProvider soundProvider;
 
   final Box<AlarmItem> _box = Hive.box<AlarmItem>(boxName);
 
@@ -20,8 +21,21 @@ class AlarmProvider extends ChangeNotifier {
 
   AlarmItem? get firingAlarm => _firingAlarm;
 
-  AlarmProvider() {
+  AlarmProvider(this.soundProvider) {
+    soundProvider.addListener(_onSoundChanged);
     _ticker = Timer.periodic(const Duration(seconds: 1), (_) => _checkAlarms());
+  }
+
+  void attachSoundProvider(SoundProvider soundProvider) {
+    soundProvider.addListenerCallback(_onSoundChanged);
+  }
+
+  Future<void> _onSoundChanged() async {
+    for (final alarm in _box.values) {
+      if (!alarm.isEnabled) continue;
+      await cancelNative(alarm);
+      await _scheduleNative(alarm);
+    }
   }
 
   String _alarmKey(AlarmItem alarm) {
@@ -150,7 +164,7 @@ class AlarmProvider extends ChangeNotifier {
       trigger: alarm.nextTrigger,
     );
 
-    final sound = SoundProvider().alarmSound.file;
+    final sound = soundProvider.alarmSound.file;
 
     const platform = MethodChannel('com.example.timer/alarm');
 

@@ -14,6 +14,8 @@ class SoundItem {
 class SoundProvider extends ChangeNotifier {
   static const _boxName = 'settings';
 
+  final List<VoidCallback> _listeners = [];
+
   late Box _box;
 
   SoundProvider() {
@@ -56,5 +58,17 @@ class SoundProvider extends ChangeNotifier {
   void setTimerSound(SoundItem sound) {
     _box.put('timer_sound', sound.file);
     notifyListeners();
+    _notifySoundChanged();
   }
+
+  void addListenerCallback(VoidCallback cb) {
+    _listeners.add(cb);
+  }
+
+  void _notifySoundChanged() {
+    for (final cb in _listeners) {
+      cb();
+    }
+  }
+
 }
