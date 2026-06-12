@@ -168,7 +168,7 @@ class AlarmProvider extends ChangeNotifier {
 
     final sound = soundProvider.alarmSound.file;
 
-    const platform = MethodChannel('com.example.timer/alarm');
+    const platform = MethodChannel('com.gangangan.chrono/alarm');
 
     await platform.invokeMethod('scheduleAlarm', {
       'id': _nativeId(alarm.id),
@@ -182,7 +182,7 @@ class AlarmProvider extends ChangeNotifier {
   Future<void> cancelNative(AlarmItem alarm) async {
     await NotificationService.cancel(_nativeId(alarm.id));
 
-    const platform = MethodChannel('com.example.timer/alarm');
+    const platform = MethodChannel('com.gangangan.chrono/alarm');
     platform.invokeMethod('stopAlarm', {'id': _nativeId(alarm.id)});
   }
 

@@ -1,4 +1,4 @@
-package com.example.timer
+package com.gangangan.chrono
 
 import android.app.NotificationManager
 import androidx.core.app.NotificationCompat

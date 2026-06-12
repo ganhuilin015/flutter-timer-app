@@ -172,7 +172,7 @@ class TimerProvider extends ChangeNotifier {
       trigger: trigger,
     );
 
-    const platform = MethodChannel('com.example.timer/alarm');
+    const platform = MethodChannel('com.gangangan.chrono/alarm');
 
     await platform.invokeMethod('scheduleAlarm', {
       'id': _nativeId(timer.id),
@@ -186,7 +186,7 @@ class TimerProvider extends ChangeNotifier {
   Future<void> cancelNative(TimerItem timer) async {
     await NotificationService.cancel(_nativeId(timer.id));
 
-    const platform = MethodChannel('com.example.timer/alarm');
+    const platform = MethodChannel('com.gangangan.chrono/alarm');
     platform.invokeMethod('stopAlarm', {'id': _nativeId(timer.id)});
   }
 

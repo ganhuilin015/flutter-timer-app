@@ -1,4 +1,4 @@
-package com.example.timer
+package com.gangangan.chrono
 
 import android.app.Service
 import android.app.Notification

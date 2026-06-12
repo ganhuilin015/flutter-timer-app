@@ -41,6 +41,9 @@ class _StopwatchCardState extends State<StopwatchCard> {
       ),
       onDismissed: (_) => provider.removeStopwatch(entry.id),
       child: Container(
+        padding: const EdgeInsets.symmetric(
+          vertical: 10, 
+        ),
         decoration: BoxDecoration(
           color: themeColor.secondary(context),
           borderRadius: BorderRadius.circular(12),

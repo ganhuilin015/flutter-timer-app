@@ -1,4 +1,4 @@
-package com.example.timer
+package com.gangangan.chrono
 
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -11,7 +11,7 @@ import android.util.Log
 import android.app.NotificationManager
 
 class MainActivity : FlutterActivity() {
-    private val channel = "com.example.timer/alarm"
+    private val channel = "com.gangangan.chrono/alarm"
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)

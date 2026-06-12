@@ -35,11 +35,14 @@ class AlarmCard extends StatelessWidget {
           duration: const Duration(milliseconds: 200),
           opacity: alarm.isEnabled ? 1.0 : 0.5,
           child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 26,
+            ),
             decoration: BoxDecoration(
               color: themeColor.secondary(context),
               borderRadius: BorderRadius.circular(12),
             ),
-            padding: const EdgeInsets.all(16),
             child: Row(
               children: [
                 Expanded(
