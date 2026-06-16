@@ -45,9 +45,9 @@ class _SoundPickerScreenState extends State<SoundPickerScreen> {
             : 'Timer Sound'),
       ),
       body: ListView.builder(
-        itemCount: soundProvider.sounds.length,
+        itemCount: soundProvider.sortedSounds.length,
         itemBuilder: (context, index) {
-          final sound = soundProvider.sounds[index];
+          final sound = soundProvider.sortedSounds[index];
           final isSelected = sound.file == currentFile;
 
           return ListTile(

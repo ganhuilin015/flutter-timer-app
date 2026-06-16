@@ -57,10 +57,31 @@ flutter:
   assets:
     - assets/sounds/alarmbuzzer.mp3
     - assets/sounds/alert.mp3
+    - assets/sounds/beautifuldream.mp3
     - assets/sounds/beep.mp3
+    - assets/sounds/birdssinging.mp3
+    - assets/sounds/casino.mp3
+    - assets/sounds/catwalk.mp3
+    - assets/sounds/cheers.mp3
     - assets/sounds/classic.mp3
+    - assets/sounds/complicated.mp3
+    - assets/sounds/crowdlaugh.mp3
+    - assets/sounds/drivingambition.mp3
+    - assets/sounds/gameover.mp3
+    - assets/sounds/gameshow.mp3
+    - assets/sounds/keyboardtyping.mp3
+    - assets/sounds/latinlovers.mp3
+    - assets/sounds/lightrain.mp3
+    - assets/sounds/pianohorror.mp3
     - assets/sounds/retro.mp3
+    - assets/sounds/romantic.mp3
     - assets/sounds/rooster.mp3
+    - assets/sounds/silentdescent.mp3
+    - assets/sounds/techhouse.mp3
+    - assets/sounds/ticktock.mp3
+    - assets/sounds/villapenthouse.mp3
+    - assets/sounds/vintagephone.mp3
+    - assets/sounds/woodspirits.mp3
     - assets/sounds/notification.mp3
 
 flutter_launcher_icons:

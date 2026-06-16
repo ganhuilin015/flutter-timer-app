@@ -25,28 +25,57 @@ class SoundProvider extends ChangeNotifier {
   final List<SoundItem> sounds = [
     SoundItem(name: 'Alert', file: 'alert.mp3'),
     SoundItem(name: 'Buzzer', file: 'alarmbuzzer.mp3'),
+    SoundItem(name: 'Beautiful Dream', file: 'beautifuldream.mp3'),
     SoundItem(name: 'Classic', file: 'classic.mp3'),
     SoundItem(name: 'Retro', file: 'retro.mp3'),
     SoundItem(name: 'Rooster', file: 'rooster.mp3'),
     SoundItem(name: 'Soft Beep', file: 'beep.mp3'),
-    
+    SoundItem(name: 'Bird Singing', file: 'birdssinging.mp3'),
+    SoundItem(name: 'Casino', file: 'casino.mp3'),
+    SoundItem(name: 'Cat Walk', file: 'catwalk.mp3'),
+    SoundItem(name: 'Cheers', file: 'cheers.mp3'),
+    SoundItem(name: 'Complicated', file: 'complicated.mp3'),
+    SoundItem(name: 'Crowd Laugh', file: 'crowdlaugh.mp3'),
+    SoundItem(name: 'Driving Ambition', file: 'drivingambition.mp3'),
+    SoundItem(name: 'Game Over', file: 'gameover.mp3'),
+    SoundItem(name: 'Game Show', file: 'gameshow.mp3'),
+    SoundItem(name: 'Keyboard Typing', file: 'keyboardtyping.mp3'),
+    SoundItem(name: 'Latin Lovers', file: 'latinlovers.mp3'),
+    SoundItem(name: 'Light Rain', file: 'lightrain.mp3'),
+    SoundItem(name: 'Piano Horror', file: 'pianohorror.mp3'),
+    SoundItem(name: 'Romantic', file: 'romantic.mp3'),
+    SoundItem(name: 'Silent Descent', file: 'silentdescent.mp3'),
+    SoundItem(name: 'Tech House', file: 'techhouse.mp3'),
+    SoundItem(name: 'Tick Tock', file: 'ticktock.mp3'),
+    SoundItem(name: 'Villa Penthouse', file: 'villapenthouse.mp3'),
+    SoundItem(name: 'Vintage Phone', file: 'vintagephone.mp3'),
+    SoundItem(name: 'Wood Spirits', file: 'woodspirits.mp3'),
   ];
+
+  List<SoundItem> get sortedSounds {
+    final list = List<SoundItem>.from(sounds);
+
+    list.sort((a, b) =>
+        a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+
+    return list;
+  }
 
   SoundItem get alarmSound {
     final file = _box.get('alarm_sound');
 
-    return sounds.firstWhere(
+    return sortedSounds.firstWhere(
       (s) => s.file == file,
-      orElse: () => sounds.first,
+      orElse: () => sortedSounds.first,
     );
   }
 
   SoundItem get timerSound {
     final file = _box.get('timer_sound');
 
-    return sounds.firstWhere(
+    return sortedSounds.firstWhere(
       (s) => s.file == file,
-      orElse: () => sounds.first,
+      orElse: () => sortedSounds.first,
     );
   }
 
