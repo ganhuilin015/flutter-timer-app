@@ -31,6 +31,18 @@ class AlarmProvider extends ChangeNotifier {
     soundProvider.addListenerCallback(_onSoundChanged);
   }
 
+  List<AlarmItem> get sortedAlarms {
+    final list = _box.values.toList();
+
+    list.sort((a, b) {
+      final aMinutes = a.hour * 60 + a.minute;
+      final bMinutes = b.hour * 60 + b.minute;
+      return aMinutes.compareTo(bMinutes);
+    });
+
+    return list;
+  }
+
   Future<void> _onSoundChanged() async {
     for (final alarm in _box.values) {
       if (!alarm.isEnabled) continue;
@@ -127,6 +139,13 @@ class AlarmProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> disableAlarm(AlarmItem alarm) async {
+    alarm.isEnabled = false;
+    await alarm.save();
+    await cancelNative(alarm);
+    notifyListeners();
+  }
+
   Future<void> updateAlarm(AlarmItem updated) async {
     final existing = _box.get(updated.id);
     if (existing == null) return;
@@ -157,6 +176,16 @@ class AlarmProvider extends ChangeNotifier {
   }
 
   int _nativeId(String uuid) => uuid.hashCode.abs() % 100000;
+
+  Future<void> rescheduleAfterFiring(AlarmItem alarm) async {
+    if (!alarm.isEnabled) return;
+
+    await cancelNative(alarm);
+
+    await _scheduleNative(alarm);
+
+    notifyListeners();
+  }
 
   Future<void> _scheduleNative(AlarmItem alarm) async {
     await NotificationService.schedule(

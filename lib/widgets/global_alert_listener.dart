@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:timer/models/alarm_item.dart';
 import 'package:timer/models/timer_item.dart';
 import 'package:timer/providers/alarm_provider.dart';
 import 'package:timer/providers/timer_provider.dart';
@@ -73,13 +74,17 @@ class _GlobalAlertListenerState extends State<GlobalAlertListener> {
               if (data is TimerItem) {
                 widget.timerProvider.dismissFiring();
                 widget.timerProvider.cancelNative(data);
-              } else {
+              } else if (data is AlarmItem) {
                 widget.alarmProvider.dismissFiring();
-                widget.alarmProvider.cancelNative(data);
+
+                if (!data.repeats) {
+                  widget.alarmProvider.disableAlarm(data);
+                } else {
+                  widget.alarmProvider.rescheduleAfterFiring(data);
+                }
               }
-              if (ctx.mounted) {
-                Navigator.pop(ctx);
-              }
+              
+              Navigator.pop(ctx);
               _isShowing = false;
             },
           ),
