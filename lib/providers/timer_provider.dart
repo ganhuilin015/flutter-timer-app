@@ -26,6 +26,48 @@ class TimerProvider extends ChangeNotifier {
     _startTicker();
   }
 
+  List<TimerItem> get sortedTimers {
+    final list = _box.values.toList();
+
+    final anyRunning = list.any((t) => t.isRunning);
+
+    if (anyRunning) {
+      int priority(TimerItem t) {
+        if (t.isRunning) return 0;
+        if (t.status == TimerStatus.paused) return 1;
+        return 2;
+      }
+
+      list.sort((a, b) {
+        final p = priority(a).compareTo(priority(b));
+        if (p != 0) return p;
+
+        return a.remainingSeconds.compareTo(b.remainingSeconds);
+      });
+
+      return list;
+    }
+
+    list.sort((a, b) {
+      final nameA = a.name.trim();
+      final nameB = b.name.trim();
+
+      final hasNameA = nameA.isNotEmpty;
+      final hasNameB = nameB.isNotEmpty;
+
+      if (hasNameA && hasNameB) {
+        return nameA.toLowerCase().compareTo(nameB.toLowerCase());
+      }
+
+      if (hasNameA && !hasNameB) return -1;
+      if (!hasNameA && hasNameB) return 1;
+
+      return a.remainingSeconds.compareTo(b.remainingSeconds);
+    });
+
+    return list;
+  }
+
   void attachSoundProvider(SoundProvider soundProvider) {
     soundProvider.addListenerCallback(_onSoundChanged);
   }

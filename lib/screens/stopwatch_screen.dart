@@ -16,6 +16,8 @@ class StopwatchScreen extends StatelessWidget {
 
     return Consumer<StopwatchProvider>(
       builder: (context, provider, _) {
+        final stopwatches = provider.sortedStopwatches;
+
         return Scaffold(
           backgroundColor: color.surface(context),
           body: SafeArea(
@@ -23,10 +25,10 @@ class StopwatchScreen extends StatelessWidget {
               children: [
                 ScreenHeader(
                   title: 'STOPWATCH',
-                  subtitle: '${provider.stopwatches.where((s) => s.isRunning).length} running'
+                  subtitle: '${stopwatches.where((s) => s.isRunning).length} running'
                 ),
                 Expanded(
-                  child: provider.stopwatches.isEmpty
+                  child: stopwatches.isEmpty
                       ?  EmptyState(
                             onAdd: () => _showAddSheet(context),
                             title: 'No stopwatches yet',
@@ -36,11 +38,11 @@ class StopwatchScreen extends StatelessWidget {
                           )
                       : ListView.builder(
                           padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
-                          itemCount: provider.stopwatches.length,
+                          itemCount: stopwatches.length,
                           itemBuilder: (context, i) {
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 12),
-                              child: StopwatchCard(entry: provider.stopwatches[i]),
+                              child: StopwatchCard(entry: stopwatches[i]),
                             );
                           },
                         ),

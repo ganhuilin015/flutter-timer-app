@@ -41,13 +41,9 @@ class WorldClockScreen extends StatelessWidget {
                           buttonText: 'Add City',
                           icon: Icons.public_outlined,
                         )
-                      : ReorderableListView.builder(
+                      : ListView.builder(
                           padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
                           itemCount: provider.clocks.length,
-
-                          onReorder: (oldIndex, newIndex) {
-                            provider.reorder(oldIndex, newIndex);
-                          },
 
                           itemBuilder: (context, i) {
                             final WorldClock clock = provider.clocks[i];

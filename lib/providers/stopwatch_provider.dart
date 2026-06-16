@@ -41,6 +41,53 @@ class StopwatchProvider extends ChangeNotifier {
     if (changed) notifyListeners();
   }
 
+  List<StopwatchEntry> get sortedStopwatches {
+    final list = _box.values.toList();
+
+    final anyRunning = list.any((s) => s.isRunning);
+
+    if (anyRunning) {
+      int priority(StopwatchEntry s) {
+        if (s.isRunning) return 0;
+        if (s.elapsedMilliseconds > 0) return 1;
+        return 2;
+      }
+
+      list.sort((a, b) {
+        final p = priority(a).compareTo(priority(b));
+        if (p != 0) return p;
+
+        if (a.isRunning && b.isRunning) {
+          return (b.startedAt ?? DateTime(0))
+              .compareTo(a.startedAt ?? DateTime(0));
+        }
+
+        return a.elapsedMilliseconds.compareTo(b.elapsedMilliseconds);
+      });
+
+      return list;
+    }
+
+    list.sort((a, b) {
+      final nameA = a.name.trim();
+      final nameB = b.name.trim();
+
+      final hasNameA = nameA.isNotEmpty;
+      final hasNameB = nameB.isNotEmpty;
+
+      if (hasNameA && hasNameB) {
+        return nameA.toLowerCase().compareTo(nameB.toLowerCase());
+      }
+
+      if (hasNameA && !hasNameB) return -1;
+      if (!hasNameA && hasNameB) return 1;
+
+      return a.elapsedMilliseconds.compareTo(b.elapsedMilliseconds);
+    });
+
+    return list;
+  }
+
   Future<void> addStopwatch(StopwatchEntry entry) async {
     await _box.put(entry.id, entry);
     notifyListeners();

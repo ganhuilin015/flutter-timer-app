@@ -22,6 +22,8 @@ class _TimerScreenState extends State<TimerScreen> {
 
     return Consumer<TimerProvider>(
       builder: (context, provider, _) {
+        final timers = provider.sortedTimers;
+
         return Scaffold(
           backgroundColor: color.background(context),
           body: SafeArea(
@@ -30,10 +32,10 @@ class _TimerScreenState extends State<TimerScreen> {
                 ScreenHeader(
                   title: 'TIMER',
                   subtitle:
-                      '${provider.timers.where((t) => t.isRunning).length} running',
+                      '${timers.where((t) => t.isRunning).length} running',
                 ),
                 Expanded(
-                  child: provider.timers.isEmpty
+                  child: timers.isEmpty
                       ? EmptyState(
                           onAdd: () => _showAddSheet(context),
                           title: 'No timers yet',
@@ -44,9 +46,9 @@ class _TimerScreenState extends State<TimerScreen> {
                         )
                       : ListView.builder(
                           padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
-                          itemCount: provider.timers.length,
+                          itemCount: timers.length,
                           itemBuilder: (context, i) {
-                            final timer = provider.timers[i];
+                            final timer = timers[i];
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 12),
                               child: TimerCard(timer: timer),

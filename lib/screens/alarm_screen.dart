@@ -32,6 +32,7 @@ class _AlarmScreenState extends State<AlarmScreen> {
 
     return Consumer<AlarmProvider>(
       builder: (context, provider, _) {
+        final alarms = provider.sortedAlarms;
         return Scaffold(
           backgroundColor: themeColor.surface(context),
           body: SafeArea(
@@ -39,10 +40,10 @@ class _AlarmScreenState extends State<AlarmScreen> {
               children: [
                 ScreenHeader(
                   title: 'ALARM',
-                  subtitle: '${provider.alarms.where((a) => a.isEnabled).length} active',
+                  subtitle: '${alarms.where((a) => a.isEnabled).length} active',
                 ),
                 Expanded(
-                  child: provider.alarms.isEmpty
+                  child: alarms.isEmpty
                       ? EmptyState(
                           onAdd: () => _showAddSheet(),
                           title: 'No alarms set',
@@ -52,10 +53,10 @@ class _AlarmScreenState extends State<AlarmScreen> {
                         )
                       : ListView.builder(
                           padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
-                          itemCount: provider.alarms.length,
+                          itemCount: alarms.length,
                           itemBuilder: (context, i) => Padding(
                             padding: const EdgeInsets.only(bottom: 12),
-                            child: AlarmCard(alarm: provider.alarms[i]),
+                            child: AlarmCard(alarm: alarms[i]),
                           ),
                         ),
                 ),

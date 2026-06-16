@@ -7,7 +7,7 @@ class WorldClockProvider extends ChangeNotifier {
 
   Box<WorldClock> get _box => Hive.box<WorldClock>(boxName);
 
-  List<WorldClock> get clocks => _box.values.toList();
+  List<WorldClock> get clocks => sortedClocks;
 
   Future<void> addClock(WorldClock clock) async {
     await _box.put(clock.id, clock);
@@ -33,20 +33,19 @@ class WorldClockProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> reorder(int oldIndex, int newIndex) async {
+  List<WorldClock> get sortedClocks {
     final list = _box.values.toList();
 
-    if (newIndex > oldIndex) newIndex--;
+    list.sort((a, b) {
+      final aTime = a.currentTime;
+      final bTime = b.currentTime;
 
-    final item = list.removeAt(oldIndex);
-    list.insert(newIndex, item);
+      final aMinutes = aTime.hour * 60 + aTime.minute;
+      final bMinutes = bTime.hour * 60 + bTime.minute;
 
-    await _box.clear();
+      return aMinutes.compareTo(bMinutes);
+    });
 
-    for (final clock in list) {
-      await _box.put(clock.id, clock);
-    }
-
-    notifyListeners();
+    return list;
   }
 }
