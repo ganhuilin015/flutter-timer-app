@@ -180,11 +180,19 @@ class AlarmProvider extends ChangeNotifier {
   Future<void> rescheduleAfterFiring(AlarmItem alarm) async {
     if (!alarm.isEnabled) return;
 
-    await cancelNative(alarm);
+    await stopRinging(alarm);
 
     await _scheduleNative(alarm);
 
     notifyListeners();
+  }
+
+  Future<void> stopRinging(AlarmItem alarm) async {
+    const platform = MethodChannel('com.gangangan.chrono/alarm');
+
+    await platform.invokeMethod('stopAlarm', {
+      'id': _nativeId(alarm.id),
+    });
   }
 
   Future<void> _scheduleNative(AlarmItem alarm) async {

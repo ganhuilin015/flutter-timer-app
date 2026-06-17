@@ -18,7 +18,7 @@ class GlobalAlertListener extends StatefulWidget {
     super.key,
     required this.child,
     required this.timerProvider,
-    required this.alarmProvider
+    required this.alarmProvider,
   });
 
   @override
@@ -56,8 +56,6 @@ class _GlobalAlertListenerState extends State<GlobalAlertListener> {
         );
       }
 
-      
-
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final ctx = navigatorKey.currentState?.overlay?.context;
         if (ctx == null) {
@@ -83,7 +81,7 @@ class _GlobalAlertListenerState extends State<GlobalAlertListener> {
                   widget.alarmProvider.rescheduleAfterFiring(data);
                 }
               }
-              
+
               Navigator.pop(ctx);
               _isShowing = false;
             },
