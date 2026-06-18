@@ -52,75 +52,73 @@ class WorldClockCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
         ),
 
-        child: Expanded(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    clock.cityName,
-                    style: TextStyle(
-                      color: themeColor.onSurface(context),
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  clock.cityName,
+                  style: TextStyle(
+                    color: themeColor.onSurface(context),
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
                   ),
+                ),
 
-                  const SizedBox(height: 2),
+                const SizedBox(height: 2),
 
-                  Text(
-                    clock.countryName,
-                    style: TextStyle(
-                      color: themeColor.onSurface(context),
-                      fontSize: 13,
-                    ),
+                Text(
+                  clock.countryName,
+                  style: TextStyle(
+                    color: themeColor.onSurface(context),
+                    fontSize: 13,
                   ),
+                ),
 
-                  const SizedBox(height: 6),
+                const SizedBox(height: 6),
 
-                  Row (
-                    children: [
-                      Text(
-                        utcLabel,
-                        style: TextStyle(
-                          color: themeColor.onSurface(context).withAlpha(150),
-                          fontSize: 11,
-                        ),
+                Row (
+                  children: [
+                    Text(
+                      utcLabel,
+                      style: TextStyle(
+                        color: themeColor.onSurface(context).withAlpha(150),
+                        fontSize: 11,
                       ),
-
-                      const SizedBox(width: 8),
-
-                      Text(
-                        date,
-                        style: TextStyle(
-                          color: themeColor.onSurface(context).withAlpha(150),
-                          fontSize: 11,
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    time,
-                    style: TextStyle(
-                      color: themeColor.onSurface(context),
-                      fontSize: 32,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 1,
                     ),
+
+                    const SizedBox(width: 8),
+
+                    Text(
+                      date,
+                      style: TextStyle(
+                        color: themeColor.onSurface(context).withAlpha(150),
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  time,
+                  style: TextStyle(
+                    color: themeColor.onSurface(context),
+                    fontSize: 32,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1,
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
