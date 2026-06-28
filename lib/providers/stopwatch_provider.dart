@@ -33,7 +33,7 @@ class StopwatchProvider extends ChangeNotifier {
             sw.accumulatedMs +
             now.difference(sw.startedAt!).inMilliseconds;
 
-        sw.save(); // 💾 persist
+        sw.save(); 
         changed = true;
       }
     }

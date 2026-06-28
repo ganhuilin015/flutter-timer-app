@@ -40,6 +40,9 @@ class TimerItem extends HiveObject {
   @HiveField(6)
   String soundFile;
 
+  @HiveField(7)
+  DateTime? endTime;
+
   TimerItem({
     required this.id,
     required this.name,
@@ -48,6 +51,7 @@ class TimerItem extends HiveObject {
     this.status = TimerStatus.idle,
     this.color = '#00E5CC',
     this.soundFile = 'alarmbuzzer.mp3',
+    this.endTime,
   }) : remainingSeconds = remainingSeconds ?? totalSeconds;
 
   double get progress {
@@ -90,6 +94,7 @@ class TimerItem extends HiveObject {
     TimerStatus? status,
     String? color,
     String? soundFile,
+    DateTime? endTime,
   }) {
     return TimerItem(
       id: id ?? this.id,
@@ -99,6 +104,7 @@ class TimerItem extends HiveObject {
       status: status ?? this.status,
       color: color ?? this.color,
       soundFile: soundFile ?? this.soundFile,
+      endTime: endTime ?? this.endTime,
     );
   }
 }

@@ -109,6 +109,11 @@ While the application is running:
 ---
 
 # Building for Release
+## Build and install it like the actual release
+
+```bash
+flutter run --release
+```
 
 ## Build Android APK
 
@@ -175,6 +180,12 @@ Format the codebase:
 
 ```bash
 dart format .
+```
+
+Regenerate the .g.dart:
+
+```bash
+dart run build_runner build --delete-conflicting-outputs
 ```
 
 ---

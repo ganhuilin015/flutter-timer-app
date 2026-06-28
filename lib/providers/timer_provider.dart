@@ -89,28 +89,40 @@ class TimerProvider extends ChangeNotifier {
   void _tick() {
     bool changed = false;
 
+    final now = DateTime.now();
+
     for (final timer in _box.values) {
-      if (timer.isRunning) {
-        if (timer.remainingSeconds > 0) {
-          timer.remainingSeconds--;
-          timer.save();
-          changed = true;
-        } else {
-          timer.status = TimerStatus.finished;
-          timer.save();
+      if (!timer.isRunning || timer.endTime == null) {
+        continue;
+      }
 
-          if (!_firingQueue.contains(timer)) {
-            _firingQueue.add(timer);
-            GlobalAlertService.instance.showAlarm(timer);
-            notifyListeners();
-          }
+      final remaining = timer.endTime!.difference(now).inSeconds;
 
+      if (remaining > 0) {
+        if (remaining != timer.remainingSeconds) {
+          timer.remainingSeconds = remaining;
+          timer.save();
           changed = true;
         }
+      } else {
+        timer.remainingSeconds = 0;
+        timer.endTime = null;
+        timer.status = TimerStatus.finished;
+
+        timer.save();
+
+        if (!_firingQueue.contains(timer)) {
+          _firingQueue.add(timer);
+          GlobalAlertService.instance.showAlarm(timer);
+        }
+
+        changed = true;
       }
     }
 
-    if (changed) notifyListeners();
+    if (changed) {
+      notifyListeners();
+    }
   }
 
   void dismissFiring() {
@@ -142,10 +154,16 @@ class TimerProvider extends ChangeNotifier {
       timer.remainingSeconds = timer.totalSeconds;
     }
 
+    timer.endTime = DateTime.now().add(
+      Duration(seconds: timer.remainingSeconds),
+    );
+
     timer.status = TimerStatus.running;
+
     await timer.save();
 
     await _scheduleNative(timer);
+
     notifyListeners();
   }
 
@@ -153,10 +171,19 @@ class TimerProvider extends ChangeNotifier {
     final timer = _box.get(id);
     if (timer == null) return;
 
-    if (timer.isRunning) {
+    if (timer.isRunning && timer.endTime != null) {
+      timer.remainingSeconds = timer.endTime!
+          .difference(DateTime.now())
+          .inSeconds
+          .clamp(0, timer.totalSeconds);
+
+      timer.endTime = null;
       timer.status = TimerStatus.paused;
+
       await timer.save();
+
       await cancelNative(timer);
+
       notifyListeners();
     }
   }
@@ -166,9 +193,11 @@ class TimerProvider extends ChangeNotifier {
     if (timer == null) return;
 
     timer.remainingSeconds = timer.totalSeconds;
+    timer.endTime = null;
     timer.status = TimerStatus.idle;
 
     await timer.save();
+
     await cancelNative(timer);
 
     notifyListeners();
@@ -189,6 +218,7 @@ class TimerProvider extends ChangeNotifier {
     if (totalSeconds != null) {
       timer.totalSeconds = totalSeconds;
       timer.remainingSeconds = totalSeconds;
+      timer.endTime = null;
       timer.status = TimerStatus.idle;
     }
 

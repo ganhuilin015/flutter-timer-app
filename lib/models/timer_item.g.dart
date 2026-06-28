@@ -24,13 +24,14 @@ class TimerItemAdapter extends TypeAdapter<TimerItem> {
       status: fields[4] as TimerStatus,
       color: fields[5] as String,
       soundFile: fields[6] as String,
+      endTime: fields[7] as DateTime?,
     );
   }
 
   @override
   void write(BinaryWriter writer, TimerItem obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -44,7 +45,9 @@ class TimerItemAdapter extends TypeAdapter<TimerItem> {
       ..writeByte(5)
       ..write(obj.color)
       ..writeByte(6)
-      ..write(obj.soundFile);
+      ..write(obj.soundFile)
+      ..writeByte(7)
+      ..write(obj.endTime);
   }
 
   @override
