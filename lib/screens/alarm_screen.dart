@@ -7,6 +7,7 @@ import '../providers/alarm_provider.dart';
 import '../widgets/alarm_card.dart';
 import '../widgets/add_alarm_sheet.dart';
 import '../widgets/screen_header.dart';
+import '../widgets/color_filter.dart';
 
 class AlarmScreen extends StatefulWidget {
   const AlarmScreen({super.key});
@@ -16,6 +17,7 @@ class AlarmScreen extends StatefulWidget {
 }
 
 class _AlarmScreenState extends State<AlarmScreen> {
+  String? selectedColor;
 
   void _showAddSheet({AlarmItem? alarm}) {
     showModalBottomSheet(
@@ -32,7 +34,13 @@ class _AlarmScreenState extends State<AlarmScreen> {
 
     return Consumer<AlarmProvider>(
       builder: (context, provider, _) {
-        final alarms = provider.sortedAlarms;
+        final alarms = selectedColor == null
+          ? provider.sortedAlarms
+          : provider.sortedAlarms
+              .where(
+                (alarm) => alarm.color == selectedColor,
+              )
+              .toList();
         return Scaffold(
           backgroundColor: themeColor.surface(context),
           body: SafeArea(
@@ -41,6 +49,16 @@ class _AlarmScreenState extends State<AlarmScreen> {
                 ScreenHeader(
                   title: 'ALARM',
                   subtitle: '${alarms.where((a) => a.isEnabled).length} active',
+                  actions: [
+                    ColorFilterButton(
+                      selectedColor: selectedColor,
+                      onChanged: (color){
+                        setState(() {
+                          selectedColor = color;
+                        });
+                      },
+                    )
+                  ],
                 ),
                 Expanded(
                   child: alarms.isEmpty

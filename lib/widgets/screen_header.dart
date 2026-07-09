@@ -47,7 +47,8 @@ class ScreenHeader extends StatelessWidget {
             ],
           ),
           const Spacer(),
-          const SizedBox(width: 20),
+          ...actions,
+          const SizedBox(width: 8),
           IconButton(
             icon: const Icon(Icons.menu),
             onPressed: () {

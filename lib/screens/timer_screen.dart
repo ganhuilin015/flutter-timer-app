@@ -6,6 +6,7 @@ import '../providers/timer_provider.dart';
 import '../widgets/timer_card.dart';
 import '../widgets/add_timer_sheet.dart';
 import '../widgets/screen_header.dart';
+import '../widgets/color_filter.dart';
 
 class TimerScreen extends StatefulWidget {
   const TimerScreen({super.key});
@@ -15,6 +16,8 @@ class TimerScreen extends StatefulWidget {
 }
 
 class _TimerScreenState extends State<TimerScreen> {
+  String? selectedColor;
+
   @override
   Widget build(BuildContext context) {
     final color = context.watch<ThemeProvider>();
@@ -22,7 +25,13 @@ class _TimerScreenState extends State<TimerScreen> {
 
     return Consumer<TimerProvider>(
       builder: (context, provider, _) {
-        final timers = provider.sortedTimers;
+        final timers = selectedColor == null
+          ? provider.sortedTimers
+          : provider.sortedTimers
+              .where(
+                (timer) => timer.color == selectedColor,
+              )
+              .toList();
 
         return Scaffold(
           backgroundColor: color.background(context),
@@ -33,6 +42,16 @@ class _TimerScreenState extends State<TimerScreen> {
                   title: 'TIMER',
                   subtitle:
                       '${timers.where((t) => t.isRunning).length} running',
+                  actions: [
+                    ColorFilterButton(
+                      selectedColor: selectedColor,
+                      onChanged: (color){
+                        setState(() {
+                          selectedColor = color;
+                        });
+                      },
+                    )
+                  ],
                 ),
                 Expanded(
                   child: timers.isEmpty
