@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:timer/providers/theme_provider.dart';
+import 'package:timer/widgets/banner_ad.dart';
 import 'timer_screen.dart';
 import 'package:provider/provider.dart';
 import 'stopwatch_screen.dart';
@@ -71,7 +72,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           WorldClockScreen(),
         ],
       ),
-      bottomNavigationBar: _buildNavBar(),
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildNavBar(),
+          const BannerAdWidget(),
+        ],
+      ),
     );
   }
 

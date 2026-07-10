@@ -21,6 +21,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 Future<void> _requestAndroidPermissions() async {
   if (!Platform.isAndroid) return;
@@ -35,6 +36,7 @@ Future<void> _requestAndroidPermissions() async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await MobileAds.instance.initialize();
 
   tz.initializeTimeZones();
   tz.setLocalLocation(tz.getLocation('Asia/Kuala_Lumpur'));
