@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:timer/providers/theme_provider.dart';
 import 'package:timer/widgets/color_filter.dart';
 import 'package:timer/widgets/empty_state.dart';
+import 'package:timer/widgets/native_ad.dart';
 
 import '../providers/stopwatch_provider.dart';
 import '../widgets/stopwatch_card.dart';
@@ -70,26 +71,22 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
                               Icons.av_timer_outlined,
                         )
                       : ListView.builder(
-                          padding:
-                              const EdgeInsets.fromLTRB(
-                                16,
-                                0,
-                                16,
-                                100,
-                              ),
-                          itemCount:
-                              stopwatches.length,
-                          itemBuilder:
-                              (context, i) {
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
+                          itemCount: stopwatches.isEmpty ? 0 : stopwatches.length + 1,
+                          itemBuilder: (context, i) {
+                            if (i == stopwatches.length) {
+                              return const Padding(
+                                padding: EdgeInsets.only(bottom: 12),
+                                child: SizedBox(
+                                  height: 200,
+                                  child: NativeAdWidget(),
+                                ),
+                              );
+                            }
+
                             return Padding(
-                              padding:
-                                  const EdgeInsets.only(
-                                    bottom: 12,
-                                  ),
-                              child:
-                                  StopwatchCard(
-                                    entry: stopwatches[i],
-                                  ),
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: StopwatchCard(entry: stopwatches[i]),
                             );
                           },
                         ),

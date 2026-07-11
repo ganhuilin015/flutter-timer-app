@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:timer/providers/theme_provider.dart';
 import 'package:timer/widgets/empty_state.dart';
+import 'package:timer/widgets/native_ad.dart';
 import '../providers/timer_provider.dart';
 import '../widgets/timer_card.dart';
 import '../widgets/add_timer_sheet.dart';
@@ -22,16 +23,13 @@ class _TimerScreenState extends State<TimerScreen> {
   Widget build(BuildContext context) {
     final color = context.watch<ThemeProvider>();
 
-
     return Consumer<TimerProvider>(
       builder: (context, provider, _) {
         final timers = selectedColor == null
-          ? provider.sortedTimers
-          : provider.sortedTimers
-              .where(
-                (timer) => timer.color == selectedColor,
-              )
-              .toList();
+            ? provider.sortedTimers
+            : provider.sortedTimers
+                  .where((timer) => timer.color == selectedColor)
+                  .toList();
 
         return Scaffold(
           backgroundColor: color.background(context),
@@ -45,12 +43,12 @@ class _TimerScreenState extends State<TimerScreen> {
                   actions: [
                     ColorFilterButton(
                       selectedColor: selectedColor,
-                      onChanged: (color){
+                      onChanged: (color) {
                         setState(() {
                           selectedColor = color;
                         });
                       },
-                    )
+                    ),
                   ],
                 ),
                 Expanded(
@@ -65,12 +63,21 @@ class _TimerScreenState extends State<TimerScreen> {
                         )
                       : ListView.builder(
                           padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
-                          itemCount: timers.length,
-                          itemBuilder: (context, i) {
-                            final timer = timers[i];
+                          itemCount: timers.isEmpty ? 0 : timers.length + 1,
+                          itemBuilder: (context, index) {
+                            if (index == timers.length) {
+                              return const Padding(
+                                padding: EdgeInsets.only(bottom: 12),
+                                child: SizedBox(
+                                  height: 200,
+                                  child: NativeAdWidget(),
+                                ),
+                              );
+                            }
+
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 12),
-                              child: TimerCard(timer: timer),
+                              child: TimerCard(timer: timers[index]),
                             );
                           },
                         ),

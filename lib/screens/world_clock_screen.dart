@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:timer/providers/theme_provider.dart';
 import 'package:timer/widgets/empty_state.dart';
 import 'package:timer/widgets/local_time_card.dart';
+import 'package:timer/widgets/native_ad.dart';
 
 import '../providers/world_clock_provider.dart';
 import '../models/world_clock_entry.dart';
@@ -43,9 +44,19 @@ class WorldClockScreen extends StatelessWidget {
                         )
                       : ListView.builder(
                           padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
-                          itemCount: provider.clocks.length,
+                          itemCount: provider.clocks.isEmpty ? 0 : provider.clocks.length + 1,
 
                           itemBuilder: (context, i) {
+                            if (i == provider.clocks.length) {
+                              return const Padding(
+                                padding: EdgeInsets.only(bottom: 12),
+                                child: SizedBox(
+                                  height: 200,
+                                  child: NativeAdWidget(),
+                                ),
+                              );
+                            }
+
                             final WorldClock clock = provider.clocks[i];
 
                             return Padding(

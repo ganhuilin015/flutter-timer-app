@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:timer/models/alarm_item.dart';
 import 'package:timer/providers/theme_provider.dart';
 import 'package:timer/widgets/empty_state.dart';
+import 'package:timer/widgets/native_ad.dart';
 import '../providers/alarm_provider.dart';
 import '../widgets/alarm_card.dart';
 import '../widgets/add_alarm_sheet.dart';
@@ -35,12 +36,10 @@ class _AlarmScreenState extends State<AlarmScreen> {
     return Consumer<AlarmProvider>(
       builder: (context, provider, _) {
         final alarms = selectedColor == null
-          ? provider.sortedAlarms
-          : provider.sortedAlarms
-              .where(
-                (alarm) => alarm.color == selectedColor,
-              )
-              .toList();
+            ? provider.sortedAlarms
+            : provider.sortedAlarms
+                  .where((alarm) => alarm.color == selectedColor)
+                  .toList();
         return Scaffold(
           backgroundColor: themeColor.surface(context),
           body: SafeArea(
@@ -52,12 +51,12 @@ class _AlarmScreenState extends State<AlarmScreen> {
                   actions: [
                     ColorFilterButton(
                       selectedColor: selectedColor,
-                      onChanged: (color){
+                      onChanged: (color) {
                         setState(() {
                           selectedColor = color;
                         });
                       },
-                    )
+                    ),
                   ],
                 ),
                 Expanded(
@@ -65,17 +64,30 @@ class _AlarmScreenState extends State<AlarmScreen> {
                       ? EmptyState(
                           onAdd: () => _showAddSheet(),
                           title: 'No alarms set',
-                          subtitle: 'Add an alarm with custom repeat\nschedules and names.',
+                          subtitle:
+                              'Add an alarm with custom repeat\nschedules and names.',
                           buttonText: 'Add Alarm',
                           icon: Icons.av_timer_outlined,
                         )
                       : ListView.builder(
                           padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
-                          itemCount: alarms.length,
-                          itemBuilder: (context, i) => Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: AlarmCard(alarm: alarms[i]),
-                          ),
+                          itemCount: alarms.isEmpty ? 0 : alarms.length + 1,
+                          itemBuilder: (context, i) {
+                            if (i == alarms.length) {
+                              return const Padding(
+                                padding: EdgeInsets.only(bottom: 12),
+                                child: SizedBox(
+                                  height: 200,
+                                  child: NativeAdWidget(),
+                                ),
+                              );
+                            }
+
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: AlarmCard(alarm: alarms[i]),
+                            );
+                          },
                         ),
                 ),
               ],
