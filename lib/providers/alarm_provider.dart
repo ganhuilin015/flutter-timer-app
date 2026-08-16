@@ -209,6 +209,7 @@ class AlarmProvider extends ChangeNotifier {
 
     await platform.invokeMethod('scheduleAlarm', {
       'id': _nativeId(alarm.id),
+      'type': 'alarm',
       'alarm_id': alarm.id,
       'trigger': alarm.nextTrigger.millisecondsSinceEpoch,
       'title': alarm.name.isEmpty ? 'Alarm' : alarm.name,

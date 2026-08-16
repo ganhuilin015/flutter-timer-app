@@ -24,13 +24,14 @@ class MainActivity : FlutterActivity() {
 
                     "scheduleAlarm" -> {
                         val id = call.argument<Int>("id")!!
+                        val type = call.argument<String>("type")!!
                         val alarmId = call.argument<String>("alarm_id")!!
                         val trigger = call.argument<Long>("trigger")!!
                         val title = call.argument<String>("title")!!
                         val body = call.argument<String>("body")!!
                         val sound = call.argument<String>("sound") ?: "alarmbuzzer.mp3"
 
-                        scheduleAlarm(id, alarmId, trigger, title, body, sound)
+                        scheduleAlarm(id, type, alarmId, trigger, title, body, sound)
                         result.success(null)
                     }
 
@@ -46,6 +47,8 @@ class MainActivity : FlutterActivity() {
                         if (isRinging) {
                             result.success(
                                 mapOf(
+                                    "type" to prefs.getString("type", null),
+                                    "id" to prefs.getString("id", null),
                                     "alarm_id" to prefs.getString("alarm_id", null),
                                     "native_id" to prefs.getInt("native_id", -1),
                                     "title" to prefs.getString("title", "Alarm"),
@@ -64,6 +67,7 @@ class MainActivity : FlutterActivity() {
 
     private fun scheduleAlarm(
         id: Int,
+        type: String,
         alarmId: String,
         trigger: Long,
         title: String,
@@ -78,6 +82,7 @@ class MainActivity : FlutterActivity() {
             putExtra("sound_file", sound)
             putExtra("notification_id", id)
             putExtra("alarm_id", alarmId)
+            putExtra("type", type)
         }
 
         val pendingIntent = PendingIntent.getBroadcast(

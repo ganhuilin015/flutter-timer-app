@@ -118,22 +118,42 @@ class _GlobalAlertListenerState extends State<GlobalAlertListener> {
     if (!mounted) return;
     if (_isShowing) return;
 
-    final title = result['title'] as String? ?? 'Alarm';
+
     final alarmId = result['alarm_id'] as String?;
+    final type = result['type'] as String?;
+    final title =
+      result['title'] as String? ??
+      (type == 'timer' ? 'Timer' : 'Alarm');    
 
-    if (alarmId == null) return;
+    if (type == null || alarmId == null) return;
 
-    final alarm = widget.alarmProvider.getAlarmById(alarmId);
+    if (type == 'alarm') {
+      final alarm = widget.alarmProvider.getAlarmById(alarmId);
 
-    if (alarm == null) return;
+      if (alarm == null) return;
 
-    final alertData = AlertData(
-      title: title,
-      subtitle: alarm.formattedTime,
-      icon: Icons.alarm,
-    );
+      final alertData = AlertData(
+        title: title,
+        subtitle: alarm.formattedTime,
+        icon: Icons.alarm,
+      );
 
-    _showAlarmDialog(alarm, alertData);
+      _showAlarmDialog(alarm, alertData);
+    }
+
+    if (type == 'timer') {
+      final timer = widget.timerProvider.getTimerById(alarmId);
+
+      if (timer == null) return;
+
+      final alertData = AlertData(
+        title: title,
+        subtitle: timer.formattedTime,
+        icon: Icons.timer,
+      );
+
+      _showTimerDialog(timer, alertData);
+    }
   }
 
   void _showAlarmDialog(
@@ -155,13 +175,48 @@ class _GlobalAlertListenerState extends State<GlobalAlertListener> {
         data: alertData,
         onDismiss: () async {
           if (!mounted) return;
+          await widget.alarmProvider.stopRinging(alarm);
 
           if (!alarm.repeats) {
-            await widget.alarmProvider.stopRinging(alarm);
             await widget.alarmProvider.disableAlarm(alarm);
           } else {
             await widget.alarmProvider.rescheduleAfterFiring(alarm);
           }
+
+          if (navigatorKey.currentState?.canPop() ?? false) {
+            navigatorKey.currentState!.pop();
+          }
+
+          _isShowing = false;
+        },
+      ),
+    ).then((_) {
+      _isShowing = false;
+    });
+  }
+
+  void _showTimerDialog(
+    TimerItem timer,
+    AlertData alertData,
+  ) {
+    if (!mounted || _isShowing) return;
+
+    final ctx =
+        navigatorKey.currentState?.overlay?.context;
+
+    if (ctx == null) return;
+
+    _isShowing = true;
+
+    showGeneralDialog(
+      context: ctx,
+      barrierDismissible: false,
+      pageBuilder: (_, __, ___) => FullScreenAlert(
+        data: alertData,
+        onDismiss: () async {
+          if (!mounted) return;
+          widget.timerProvider.dismissFiring();
+          await widget.timerProvider.cancelNative(timer);
 
           if (navigatorKey.currentState?.canPop() ?? false) {
             navigatorKey.currentState!.pop();

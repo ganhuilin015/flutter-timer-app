@@ -24,6 +24,7 @@ class AlarmForegroundService : Service() {
 
         private const val PREFS_NAME = "alarm_state"
         private const val KEY_IS_RINGING = "is_ringing"
+        private const val KEY_TYPE = "type"
         private const val KEY_ALARM_ID = "alarm_id"
         private const val KEY_NATIVE_ID = "native_id"
         private const val KEY_TITLE = "title"
@@ -48,7 +49,7 @@ class AlarmForegroundService : Service() {
 
             stopForeground(true)
             stopSelf()
-            return START_NOT_STICKY
+            return START_STICKY
         }
 
         val title = intent.getStringExtra("title")
@@ -56,10 +57,12 @@ class AlarmForegroundService : Service() {
         val soundFile = intent.getStringExtra("sound_file") ?: "alarmbuzzer.mp3"
         val notificationId = intent.getIntExtra("notification_id", 1)
         val alarmId = intent.getStringExtra("alarm_id")
+        val type = intent.getStringExtra("type") ?: "alarm"
 
         getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
             .edit()
             .putBoolean(KEY_IS_RINGING, true)
+            .putString(KEY_TYPE, type)
             .putString(KEY_ALARM_ID, alarmId)
             .putInt(KEY_NATIVE_ID, notificationId)
             .putString(KEY_TITLE, title)

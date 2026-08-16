@@ -248,6 +248,7 @@ class TimerProvider extends ChangeNotifier {
 
     await platform.invokeMethod('scheduleAlarm', {
       'id': _nativeId(timer.id),
+      'type': 'timer',
       'alarm_id': timer.id,
       'trigger': trigger.millisecondsSinceEpoch,
       'title': timer.name.isEmpty ? 'Timer' : timer.name,
@@ -262,6 +263,11 @@ class TimerProvider extends ChangeNotifier {
     const platform = MethodChannel('com.gangangan.chrono/alarm');
     platform.invokeMethod('stopAlarm', {'id': _nativeId(timer.id)});
   }
+
+  TimerItem? getTimerById(String id) {
+    return _box.get(id);
+  }
+
 
   @override
   void dispose() {
