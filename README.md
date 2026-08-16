@@ -194,6 +194,8 @@ dart run build_runner build --delete-conflicting-outputs
 
 ### Android
 
+**NOTE: Remember to increase the release version**
+
 1. Generate the release bundle:
 
 ```bash
