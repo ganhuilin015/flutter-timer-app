@@ -209,6 +209,7 @@ class AlarmProvider extends ChangeNotifier {
 
     await platform.invokeMethod('scheduleAlarm', {
       'id': _nativeId(alarm.id),
+      'alarm_id': alarm.id,
       'trigger': alarm.nextTrigger.millisecondsSinceEpoch,
       'title': alarm.name.isEmpty ? 'Alarm' : alarm.name,
       'body': 'Tap to stop alarm',
@@ -221,6 +222,10 @@ class AlarmProvider extends ChangeNotifier {
 
     const platform = MethodChannel('com.gangangan.chrono/alarm');
     platform.invokeMethod('stopAlarm', {'id': _nativeId(alarm.id)});
+  }
+
+  AlarmItem? getAlarmById(String id) {
+    return _box.get(id);
   }
 
   @override

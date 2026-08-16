@@ -35,6 +35,11 @@ class AlarmReceiver : BroadcastReceiver() {
                 "notification_id",
                 intent.getIntExtra("notification_id", -1)
             )
+
+            putExtra(
+                "alarm_id",
+                intent.getStringExtra("alarm_id")
+            )
         }
 
         ContextCompat.startForegroundService(context,serviceIntent)

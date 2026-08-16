@@ -24,12 +24,13 @@ class MainActivity : FlutterActivity() {
 
                     "scheduleAlarm" -> {
                         val id = call.argument<Int>("id")!!
+                        val alarmId = call.argument<String>("alarm_id")!!
                         val trigger = call.argument<Long>("trigger")!!
                         val title = call.argument<String>("title")!!
                         val body = call.argument<String>("body")!!
                         val sound = call.argument<String>("sound") ?: "alarmbuzzer.mp3"
 
-                        scheduleAlarm(id, trigger, title, body, sound)
+                        scheduleAlarm(id, alarmId, trigger, title, body, sound)
                         result.success(null)
                     }
 
@@ -39,6 +40,23 @@ class MainActivity : FlutterActivity() {
                         result.success(null)
                     }
 
+                    "getActiveAlarm" -> {
+                        val prefs = getSharedPreferences("alarm_state", Context.MODE_PRIVATE)
+                        val isRinging = prefs.getBoolean("is_ringing", false)
+                        if (isRinging) {
+                            result.success(
+                                mapOf(
+                                    "alarm_id" to prefs.getString("alarm_id", null),
+                                    "native_id" to prefs.getInt("native_id", -1),
+                                    "title" to prefs.getString("title", "Alarm"),
+                                    "body" to prefs.getString("body", "Tap to stop alarm")
+                                )
+                            )
+                        } else {
+                            result.success(null)
+                        }
+                    }
+
                     else -> result.notImplemented()
                 }
             }
@@ -46,6 +64,7 @@ class MainActivity : FlutterActivity() {
 
     private fun scheduleAlarm(
         id: Int,
+        alarmId: String,
         trigger: Long,
         title: String,
         body: String,
@@ -58,6 +77,7 @@ class MainActivity : FlutterActivity() {
             putExtra("body", body)
             putExtra("sound_file", sound)
             putExtra("notification_id", id)
+            putExtra("alarm_id", alarmId)
         }
 
         val pendingIntent = PendingIntent.getBroadcast(
