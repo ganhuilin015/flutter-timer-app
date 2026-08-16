@@ -5,7 +5,6 @@ import 'package:timer/data/world_cities.dart';
 import 'package:timer/providers/theme_provider.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 class LocalTimeCard extends StatefulWidget {
   const LocalTimeCard({super.key});
 
@@ -54,13 +53,7 @@ class _LocalTimeCardState extends State<LocalTimeCard> {
   }
 
   Future<void> _loadLocation() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    final cachedCity = prefs.getString('cached_city');
-    if (cachedCity != null) {
-      setState(() {
-        _city = cachedCity;
-      });
+    if (_city != 'Loading...') {
       return;
     }
 
@@ -103,7 +96,6 @@ class _LocalTimeCardState extends State<LocalTimeCard> {
         _city = city;
       });
 
-      await prefs.setString('cached_city', city);
     } else {
       final fallback = _fallbackCityFromTimezone();
 
@@ -111,7 +103,6 @@ class _LocalTimeCardState extends State<LocalTimeCard> {
         _city = fallback;
       });
 
-      await prefs.setString('cached_city', fallback);
     }
   }
 
