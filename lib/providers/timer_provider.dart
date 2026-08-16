@@ -248,6 +248,7 @@ class TimerProvider extends ChangeNotifier {
 
     await platform.invokeMethod('scheduleAlarm', {
       'id': _nativeId(timer.id),
+      'alarm_id': timer.id,
       'trigger': trigger.millisecondsSinceEpoch,
       'title': timer.name.isEmpty ? 'Timer' : timer.name,
       'body': 'Tap to stop timer',
